@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The Elelroi Journal · Elelroi Mental Wellness — Fatima D Kukoyi, PMHNP-BC</title>
+<meta name="description" content="The Elelroi Journal — practical, compassionate reading on anxiety, depression, ADHD, sleep, trauma, and mental wellness from Elelroi Mental Wellness.">
+<meta property="og:title" content="The Elelroi Journal · Elelroi Mental Wellness">
+<meta property="og:description" content="Practical, compassionate reading on mental wellness.">
+<meta name="theme-color" content="#0b2a5c">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;0,700;1,600&family=Montserrat:wght@400;500;600;700;800&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%232c4c3b'/%3E%3Ctext x='50' y='70' font-size='58' text-anchor='middle' fill='%23e8c572' font-family='Georgia,serif' font-style='italic'%3EO%3C/text%3E%3C/svg%3E">
+<style>
+  :root{--green:#0b2a5c;--green2:#0b2340;--sage:#6c7a55;--gold:#c6a86f;--gold-dk:#8a6a3e;--cream:#f6f1ee;--blush:#f7efed;--paper:#fff;--ink:#223129;--muted:#51615a;--line:#e7e0d6;--serif:'Cormorant','Cormorant Garamond',Georgia,serif;--sans:'Montserrat',Arial,sans-serif;--maxw:1140px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}html,body{overflow-x:hidden}
+  body{font-family:var(--sans);color:var(--ink);background:var(--cream);line-height:1.65}
+  img{max-width:100%;display:block}a{color:inherit;text-decoration:none}
+  h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.14;color:var(--green)}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  section{padding:70px 0}
+  .center{text-align:center}
+  .eyebrow{text-transform:uppercase;letter-spacing:.3em;font-size:12px;font-weight:700;color:var(--sage)}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px;padding:14px 28px;border-radius:3px;border:1.5px solid transparent;cursor:pointer;transition:.2s}
+  .btn.gold{background:var(--green);color:#fff}.btn.gold:hover{background:var(--green2)}
+  /* NAV */
+  header.nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.96);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:120px}
+  .brandlogo{height:104px;width:auto;display:block}
+  .nav-links{display:flex;align-items:center;gap:24px}
+  .nav-links a{font-size:14px;letter-spacing:.04em;text-transform:uppercase;color:#0a2550;font-weight:800}
+  .nav-links a:hover{color:var(--sage)}
+  .nav-toggle{display:none;background:none;border:none;font-size:26px;color:var(--green);cursor:pointer}
+  /* HEADER band */
+  .jhead{background:linear-gradient(160deg,#0b2a5c,#0b2340);color:#fff;text-align:center;padding:66px 0 60px}
+  .jhead .eyebrow{color:#dcc9a0}
+  .jhead h1{color:#fff;font-size:clamp(34px,5vw,52px);margin:10px 0 8px}
+  .jhead p{color:#dbe4dd;max-width:40em;margin:0 auto;font-size:16px}
+  /* BLOG */
+  .blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .post{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:.22s}
+  .post:hover{box-shadow:0 18px 36px rgba(44,76,59,.12);transform:translateY(-4px)}
+  .post .ph{height:122px;background:linear-gradient(135deg,#0b2a5c,#1a4a8a);display:flex;align-items:center;justify-content:center;color:#dcc9a0;font-size:40px}
+  .post .pc{padding:22px;display:flex;flex-direction:column;flex:1}
+  .post .cat{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--sage);font-weight:700;margin-bottom:8px}
+  .post h3{font-size:20px;color:var(--green);margin-bottom:8px;cursor:pointer;line-height:1.2}
+  .post h3:hover{color:var(--gold-dk)}
+  .post p{color:var(--muted);font-size:14px;flex:1}
+  .post .pf{display:flex;align-items:center;justify-content:space-between;margin-top:16px}
+  .readlink{color:var(--gold-dk);font-weight:700;font-size:13px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;border-bottom:1px solid var(--gold)}
+  .share{display:flex;gap:7px}
+  .share button{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:12px;color:var(--green);display:flex;align-items:center;justify-content:center;transition:.2s}
+  .share button:hover{background:var(--green);color:#fff;border-color:var(--green)}
+  /* MODAL */
+  .ov{position:fixed;inset:0;background:rgba(8,20,13,.6);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);z-index:100;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px}
+  .ov.show{display:flex}
+  .modal{background:var(--paper);max-width:640px;width:100%;border-radius:14px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.4);animation:pop .25s ease}
+  @keyframes pop{from{transform:translateY(18px);opacity:0}to{transform:none;opacity:1}}
+  .mhead{background:var(--green);color:#fff;padding:20px 26px;display:flex;justify-content:space-between;align-items:center;gap:14px}
+  .mhead h3{color:#fff;font-size:22px}
+  .mclose{background:none;border:none;color:#fff;font-size:26px;cursor:pointer;line-height:1}
+  .mbody{padding:26px}
+  .mbody.post-body p{color:#39455c;font-size:16px;margin-bottom:14px}
+  .mbody.post-body h4{font-family:var(--serif);color:var(--green);font-size:21px;margin:18px 0 8px}
+  .share-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+  .share-row button{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;padding:9px 13px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;color:var(--green)}
+  .share-row button:hover{background:var(--blush)}
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;padding:13px 22px;border-radius:30px;font-size:14px;z-index:200;opacity:0;transition:.3s;pointer-events:none}
+  .toast.show{opacity:1}
+  /* FOOTER */
+  footer{background:#0b2340;color:#cdd8cf;padding:54px 0 28px}
+  footer .fgrid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:40px}
+  footer h4{font-family:var(--serif);color:#dcc9a0;font-size:21px;margin-bottom:12px}
+  footer a{color:#cdd8cf;font-size:14px;line-height:2}footer a:hover{color:#fff}
+  .fbrand .b1{font-family:var(--serif);font-size:24px;color:#fff;font-weight:700}
+  .copyright{border-top:1px solid rgba(255,255,255,.14);margin-top:36px;padding-top:18px;font-size:12.5px;color:#9fb0a4;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  @media(max-width:900px){
+    .blog-grid{grid-template-columns:1fr 1fr}
+    .nav-links{position:fixed;inset:120px 0 auto 0;background:var(--cream);flex-direction:column;gap:0;border-bottom:1px solid var(--line);display:none}
+    .nav-links.open{display:flex}.nav-links a{width:100%;padding:16px 24px;border-top:1px solid var(--line)}
+    .nav-links .btn{margin:14px 24px}.nav-toggle{display:block}
+    footer .fgrid{grid-template-columns:1fr}
+  }
+  @media(max-width:560px){.blog-grid{grid-template-columns:1fr}.brandlogo{height:88px}.nav-in{height:104px}.nav-links{inset:104px 0 auto 0}section{padding:52px 0}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="wrap nav-in">
+    <a href="index.html" aria-label="Elelroi Mental Wellness home"><img src="assets/elelroi-logo-nav.png" alt="Elelroi Mental Wellness" class="brandlogo"></a>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="psychiatric-evaluations.html">Services</a>
+      <a href="index.html#insurance">Insurance</a>
+      <a href="journal.html">Journal</a>
+      <a href="index.html#contact">Contact</a>
+      <a href="index.html#book" class="btn gold">Book Now</a>
+    </nav>
+    <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')">&#9776;</button>
+  </div>
+</header>
+
+<!-- HEADER -->
+<div class="jhead">
+  <div class="wrap">
+    <span class="eyebrow">The Elelroi Journal</span>
+    <h1>Insights for a calmer, clearer mind</h1>
+    <p>Practical, compassionate reading on mental wellness &mdash; share any article with someone who needs it.</p>
+  </div>
+</div>
+
+<!-- BLOG -->
+<section>
+  <div class="wrap">
+    <div class="blog-grid" id="blogGrid"></div>
+  </div>
+</section>
+
+<!-- POST MODAL -->
+<div class="ov" id="postOv">
+  <div class="modal">
+    <div class="mhead"><h3 id="postTitle"></h3><button class="mclose" onclick="document.getElementById('postOv').classList.remove('show')">&times;</button></div>
+    <div class="mbody post-body" id="postBody"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap fgrid">
+    <div class="fbrand">
+      <img src="assets/elelroi-logo-nav.png" alt="Elelroi Mental Wellness" style="height:94px;width:auto;background:#fff;border-radius:12px;padding:8px;display:block">
+      <p style="margin-top:12px;font-size:14px;color:#9fb6a9;max-width:26em">Compassionate, evidence-based online psychiatry with Fatima D Kukoyi, PMHNP-BC. A calm place to heal.</p>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <a id="footPhone" href="tel:+12813036029">&#c79a2a; (281) 303-6029</a><br>
+      <a id="footEmail" href="mailto:info@elelroimentalwellness.com">&#9993; info@elelroimentalwellness.com</a><br>
+      <a href="index.html#book">&#10022; Book an appointment</a>
+    </div>
+    <div>
+      <h4>Explore</h4>
+      <a href="index.html">Home</a><br>
+      <a href="about.html">About Fatima</a><br>
+      <a href="psychiatric-evaluations.html">Psychiatric Evaluations</a><br>
+      <a href="journal.html">The Elelroi Journal</a>
+    </div>
+  </div>
+  <div class="wrap copyright">
+    <span>&copy; <span id="yr"></span> Elelroi Mental Wellness &middot; elelroimentalwellness.com</span>
+    <span>This page is for information and does not replace emergency care. In a crisis call or text 988.</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="assets/elelroi-sync.js"></script>
+<script>
+  document.getElementById('yr').textContent=new Date().getFullYear();
+  /* reflect shared contact details (phone/email) from Supabase */
+  try{if(window.ElelroiSync)ElelroiSync.applyContactIds(JSON.parse(localStorage.getItem('elelroi_cfg')||'{}'));}catch(e){}
+  if(window.ElelroiSync){ElelroiSync.getConfig().then(function(c){if(c){ElelroiSync.applyContactIds(c);try{localStorage.setItem('elelroi_cfg',JSON.stringify(c));}catch(e){}}});}
+  var DEFAULT_POSTS=[
+    {cat:'Medication',ic:'💊',t:'Starting Psychiatric Medication: What to Really Expect',ex:'The honest, judgment-free guide to beginning medication — timelines, side effects, and how we adjust together.',
+      body:'<p>Deciding to start a psychiatric medication can feel huge. Here is what the first few weeks usually look like, and why patience and partnership matter.</p><h4>It is a collaboration, not a prescription pad</h4><p>We start low, go slow, and check in often. Your feedback is the most important data we have.</p><h4>Give it a fair window</h4><p>Many medications take 2–6 weeks to show their full benefit. Early side effects often ease as your body adjusts.</p><h4>You are never stuck</h4><p>If something is not working, we change it. The goal is <em>you</em> feeling like yourself — not any particular pill.</p>'},
+    {cat:'Anxiety',ic:'🌊',t:'5 Grounding Techniques to Calm Anxiety in 60 Seconds',ex:'Simple, science-backed tools you can use anywhere when anxiety spikes — no app required.',
+      body:'<p>When anxiety surges, your nervous system needs a signal of safety. These quick techniques help.</p><h4>1. 5-4-3-2-1 senses</h4><p>Name 5 things you see, 4 you feel, 3 you hear, 2 you smell, 1 you taste.</p><h4>2. Box breathing</h4><p>Inhale 4, hold 4, exhale 4, hold 4. Repeat four times.</p><h4>3. Cold water</h4><p>Splash your face or hold something cold — it activates the calming dive reflex.</p><h4>4. Name it</h4><p>“This is anxiety, and it will pass.” Labeling lowers its intensity.</p><h4>5. Move</h4><p>A brisk 2-minute walk burns off stress hormones.</p>'},
+    {cat:'ADHD',ic:'⚡',t:'Adult ADHD Is Not “Just Being Distracted”',ex:'Why so many adults — especially women — are diagnosed late, and what real treatment looks like.',
+      body:'<p>ADHD in adults often hides behind years of coping, masking, and self-blame. It is far more than distraction.</p><h4>Common signs</h4><p>Chronic lateness, unfinished projects, emotional overwhelm, time blindness, and exhausting mental effort to stay organized.</p><h4>Why late diagnosis is common</h4><p>Many adults — particularly women — were never evaluated as children. Treatment can be genuinely life-changing.</p><h4>What helps</h4><p>A combination of medication, structure, and self-compassion. You are not lazy — your brain is wired differently.</p>'},
+    {cat:'Depression',ic:'🌱',t:'When It’s More Than a Bad Week: Recognizing Depression',ex:'How to tell ordinary low mood from clinical depression — and when to reach out.',
+      body:'<p>Everyone has hard days. Depression is different — it lingers and dims the things you used to enjoy.</p><h4>Watch for two weeks or more of</h4><p>Low mood, loss of interest, changes in sleep or appetite, fatigue, guilt, trouble concentrating, or hopelessness.</p><h4>It is not weakness</h4><p>Depression is a medical condition with effective treatment. Reaching out is strength, not failure.</p>'},
+    {cat:'Sleep',ic:'🌙',t:'Sleep and Mental Health: The Two-Way Street',ex:'Poor sleep worsens anxiety and depression — and vice versa. Here’s how to break the cycle.',
+      body:'<p>Sleep and mood feed each other. Improving one often improves the other.</p><h4>Protect your wind-down</h4><p>Dim lights an hour before bed; keep screens out of the bedroom.</p><h4>Keep a rhythm</h4><p>Same wake time every day — even weekends — anchors your body clock.</p><h4>When to seek help</h4><p>If sleep problems persist for weeks, they may be part of an underlying condition we can treat.</p>'},
+    {cat:'Women’s Health',ic:'🌸',t:'Hormones, Mood, and Women’s Mental Health',ex:'From PMS to postpartum to perimenopause — how hormonal shifts shape mood, and what helps.',
+      body:'<p>Hormonal transitions can profoundly affect mood, anxiety, and sleep. You deserve care that takes that seriously.</p><h4>Key windows</h4><p>Premenstrual, pregnancy and postpartum, and perimenopause are common times for mood changes.</p><h4>You are not “too sensitive”</h4><p>These are real, treatable shifts — with options tailored to each stage of life.</p>'},
+    {cat:'Burnout',ic:'🔥',t:'Burnout vs. Depression: How to Tell the Difference',ex:'They overlap — but need different responses. A clear, practical breakdown.',
+      body:'<p>Burnout and depression can look alike, yet they call for different care.</p><h4>Burnout</h4><p>Tied to chronic stress (often work). Rest, boundaries, and change in demands help most.</p><h4>Depression</h4><p>Pervasive and present across all areas of life, even away from stressors. Often needs clinical treatment.</p><h4>Why it matters</h4><p>Naming it correctly points you to the right relief.</p>'},
+    {cat:'Trauma',ic:'🕊️',t:'Healing After Trauma: Small Steps That Matter',ex:'Trauma recovery isn’t linear. Gentle, realistic ways to rebuild safety.',
+      body:'<p>Healing from trauma is not about “getting over it.” It is about feeling safe in your body and life again.</p><h4>Go at your pace</h4><p>There is no timeline. Small, consistent steps build lasting safety.</p><h4>Regulate first</h4><p>Grounding and breathwork calm the nervous system before deeper processing.</p><h4>You don’t have to do it alone</h4><p>Support — and sometimes medication — can make the work feel possible.</p>'},
+    {cat:'Stigma',ic:'💛',t:'Breaking the Stigma Around Psychiatric Medication',ex:'Taking medication for your mind is as valid as treating any other part of your health.',
+      body:'<p>Needing support for your mental health is human. Medication is one valid, effective tool among many.</p><h4>It doesn’t change who you are</h4><p>The right medication helps you be <em>more</em> yourself, not less.</p><h4>Asking for help is strength</h4><p>You would treat a thyroid or your blood pressure. Your brain deserves the same care.</p>'},
+    {cat:'Telehealth',ic:'💻',t:'Is Online Psychiatry Right for You?',ex:'What to expect from virtual visits — and why so many people prefer them.',
+      body:'<p>Online psychiatry brings expert care to wherever you feel most comfortable.</p><h4>Convenient &amp; private</h4><p>No commute, no waiting room — just a secure, confidential video visit.</p><h4>Just as effective</h4><p>Research shows telepsychiatry works as well as in-person for most conditions.</p><h4>Getting started is simple</h4><p>Book, complete a short intake, and meet from your phone or computer.</p>'}
+  ];
+  var POSTS=(function(){try{var s=JSON.parse(localStorage.getItem('elelroi_posts')||'null');if(s&&s.length)return s;}catch(e){}return DEFAULT_POSTS;})();
+  function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},2600);}
+  function postUrl(i){return location.origin+location.pathname+'#post-'+i;}
+  function shareButtons(i){return '<button title="Share" onclick="nativeShare('+i+')">⇪</button><button title="Facebook" onclick="shareTo(\'fb\','+i+')">f</button><button title="X" onclick="shareTo(\'x\','+i+')">𝕏</button><button title="WhatsApp" onclick="shareTo(\'wa\','+i+')">✆</button>';}
+  function shareTo(net,i){var u=encodeURIComponent(postUrl(i)),t=encodeURIComponent('Elelroi Mental Wellness — '+POSTS[i].t);var url={fb:'https://www.facebook.com/sharer/sharer.php?u='+u,x:'https://twitter.com/intent/tweet?url='+u+'&text='+t,wa:'https://wa.me/?text='+t+'%20'+u,li:'https://www.linkedin.com/sharing/share-offsite/?url='+u}[net];window.open(url,'_blank','noopener,width=640,height=560');}
+  function nativeShare(i){var data={title:'Elelroi Mental Wellness',text:POSTS[i].t,url:postUrl(i)};if(navigator.share){navigator.share(data).catch(function(){});}else{navigator.clipboard&&navigator.clipboard.writeText(postUrl(i));toast('Link copied — share it anywhere');}}
+  function copyLink(i){var u=postUrl(i);if(navigator.clipboard){navigator.clipboard.writeText(u);}toast('Link copied');}
+  function emailShare(i){window.location.href='mailto:?subject='+encodeURIComponent('Thought you would like this: '+POSTS[i].t)+'&body='+encodeURIComponent(POSTS[i].ex+'\n\n'+postUrl(i));}
+  function openPost(i){
+    document.getElementById('postTitle').textContent=POSTS[i].t;
+    document.getElementById('postBody').innerHTML=POSTS[i].body+
+      '<div class="share-row"><span style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-dk);align-self:center;font-weight:700">Share:</span>'+
+      '<button onclick="shareTo(\'fb\','+i+')">f Facebook</button><button onclick="shareTo(\'x\','+i+')">𝕏 Post</button><button onclick="shareTo(\'li\','+i+')">in LinkedIn</button><button onclick="shareTo(\'wa\','+i+')">✆ WhatsApp</button><button onclick="copyLink('+i+')">🔗 Copy link</button><button onclick="emailShare('+i+')">✉ Email</button></div>';
+    document.getElementById('postOv').classList.add('show');
+  }
+  function renderBlog(){
+    document.getElementById('blogGrid').innerHTML=POSTS.map(function(p,i){
+      return '<article class="post"><div class="ph">'+p.ic+'</div><div class="pc"><div class="cat">'+p.cat+'</div>'+
+        '<h3 onclick="openPost('+i+')">'+p.t+'</h3><p>'+p.ex+'</p>'+
+        '<div class="pf"><span class="readlink" onclick="openPost('+i+')">Read ↗</span><div class="share">'+shareButtons(i)+'</div></div></div></article>';
+    }).join('');
+  }
+  renderBlog();
+  document.getElementById('postOv').addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});
+  function deepLink(){var m=(location.hash||'').match(/post-(\d+)/);if(m&&POSTS[+m[1]]){openPost(+m[1]);}}
+  deepLink();
+  /* pull shared journal posts from Supabase (live on every device) */
+  if(window.ElelroiSync){ElelroiSync.get('posts').then(function(p){
+    if(p&&p.length){POSTS=p;try{localStorage.setItem('elelroi_posts',JSON.stringify(p));}catch(e){}renderBlog();deepLink();}
+  });}
+</script>
+</body>
+</html>
