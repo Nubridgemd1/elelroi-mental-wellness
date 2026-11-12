@@ -264,21 +264,20 @@
   .brand .b2{color:#8a8470!important;letter-spacing:.32em!important}
   .nav-links a{color:#0f3a2c!important;font-weight:800!important}
   .nav-links a:hover{color:#15663d!important}
-  /* HERO: full-bleed photo + deep-green overlay */
-  .hero{background:#16302a!important;color:#fff!important;position:relative;overflow:hidden}
-  .hero:after{display:none!important}
-  @keyframes heroKen{0%{transform:scale(1.08) translate(1.8%,1.1%)}100%{transform:scale(1.22) translate(-2.8%,-1.8%)}}
-  @keyframes heroKenM{0%{transform:scale(1.03)}100%{transform:scale(1.09)}}
-  .hero-photo{position:absolute;inset:0;background:url('https://images.pexels.com/photos/7579831/pexels-photo-7579831.jpeg?auto=compress&cs=tinysrgb&w=1600&h=1040&fit=crop') 52% 28%/cover no-repeat;transform:scale(1.08);animation:heroKen 14s ease-in-out infinite alternate;will-change:transform}
-  @media(prefers-reduced-motion:reduce){.hero-photo{animation:none;transform:scale(1.04)}}
-  .hero-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(26,42,32,.78),rgba(26,42,32,.46) 50%,rgba(26,42,32,.2))}
-  .hero-content .eyebrow,.hero-content h1,.hero-content p.lede{text-shadow:0 2px 18px rgba(8,16,11,.6)}
-  .hero-content{position:relative;z-index:2;max-width:680px;padding:98px 0 112px}
-  .hero-content .eyebrow{color:#d9c49a!important}
-  .hero-content h1{color:#fff!important;font-weight:700!important;font-size:clamp(38px,5.4vw,62px)!important;margin:14px 0 18px!important;letter-spacing:.3px}
-  .hero-content p.lede{color:#e8ede7!important;font-size:18px;max-width:34em}
+  /* HERO: split — literature on green + photo reel of happy faces */
+  .hero{background:linear-gradient(158deg,#15663d 0%,#114a2e 58%,#0f3a2c 100%)!important;color:#fff!important;position:relative;overflow:hidden}
+  .hero:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 92% 8%,rgba(227,191,94,.14),transparent 46%);pointer-events:none}
+  .hero-split{display:grid;grid-template-columns:1.02fr .98fr;gap:52px;align-items:center;padding:72px 0 0}
+  .hero-content{position:relative;z-index:2;padding:0 0 72px}
+  .hero-content .eyebrow{color:#e3bf5e!important}
+  .hero-content h1{color:#fff!important;font-weight:700!important;font-size:clamp(34px,4.4vw,54px)!important;margin:14px 0 18px!important;letter-spacing:.3px;line-height:1.08}
+  .hero-content p.lede{color:#e9efe9!important;font-size:17.5px;max-width:32em}
   .hero-content .pt-badge{background:rgba(255,255,255,.1)!important;border:1px solid rgba(255,255,255,.32)!important;color:#eef3ee!important}
-  .hero-content .pt-badge b{color:#d9c49a!important}
+  .hero-content .pt-badge b{color:#e3bf5e!important}
+  .hero-reel{position:relative;z-index:2;min-height:520px;border-radius:18px;overflow:hidden;box-shadow:0 26px 60px rgba(8,20,13,.42);border:1px solid rgba(255,255,255,.16)}
+  .hero-reel .slide{position:absolute;inset:0;background-size:cover;background-position:center 26%;opacity:0;transition:opacity 1.2s ease}
+  .hero-reel .slide.on{opacity:1}
+  .hero-reel .rtint{position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(15,58,44,.28));pointer-events:none}
   /* STATS band */
   .stats-band{position:relative;z-index:2;background:#15663d;border-top:1px solid rgba(255,255,255,.22)}
   .stats-in{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:22px 24px}
@@ -286,13 +285,13 @@
   .stat .si{font-size:23px;line-height:1}
   .stat b{font-family:var(--sans);font-size:18.5px;font-weight:800;color:#fff;display:block;line-height:1.1;letter-spacing:.01em}
   .stat em{font-style:normal;font-size:13px;color:#dce9df;display:block;margin-top:2px;font-weight:600}
+  @media(max-width:860px){
+    .hero-split{grid-template-columns:1fr;gap:0;padding:60px 0 0}
+    .hero-content{padding:0 0 40px}
+    .hero-reel{min-height:300px;margin-bottom:40px}
+  }
   @media(max-width:760px){
     .stats-in{grid-template-columns:1fr 1fr;gap:18px 14px}
-    .hero-content{padding:64px 0 48px}
-    /* show the two people on phones: lighter, vertical overlay + framed crop */
-    .hero-photo{background-position:40% 22%;animation-name:heroKenM;background-size:cover}
-    .hero-overlay{background:linear-gradient(180deg,rgba(20,33,25,.68) 0%,rgba(20,33,25,.28) 38%,rgba(20,33,25,.26) 68%,rgba(20,33,25,.46) 100%)}
-    .hero-content h1,.hero-content p.lede{text-shadow:0 2px 16px rgba(10,18,13,.6)}
     .hero-content .eyebrow{letter-spacing:.16em;overflow-wrap:break-word}
     .hero-content h1,.hero-content p.lede{overflow-wrap:break-word;word-break:break-word;max-width:100%}
   }
@@ -388,10 +387,9 @@
 </header>
 
 <!-- HERO -->
-<section class="hero" id="top" style="padding:0">
-  <div class="hero-photo" aria-hidden="true"></div>
-  <div class="hero-overlay" aria-hidden="true"></div>
-  <div class="wrap"><div class="hero-content">
+<section class="hero" id="top">
+  <div class="wrap hero-split">
+    <div class="hero-content">
     <span class="eyebrow">A Calm Place to Heal &middot; Online Psychiatry in Texas</span>
     <h1>Compassionate Care.<br>Renewed Balance.<br>A Healthier You.</h1>
     <p class="lede" id="heroBio">Evidence-based online psychiatry and medication management in a warm, judgment-free space &mdash; for anxiety, depression, ADHD, trauma, and mood disorders. Care that helps you feel heard, understood, and empowered.<br><br>Serving Texas, Washington, New York &amp; New Mexico.</p>
@@ -402,7 +400,16 @@
     <a class="pt-badge" id="ptBadge" href="https://www.psychologytoday.com/profile/1760882" target="_blank" rel="noopener">
       ✦ Verified on <b>Psychology Today</b> — view full profile ↗
     </a>
-  </div></div>
+    </div>
+    <div class="hero-reel" id="heroReel" aria-hidden="true">
+      <div class="slide on" style="background-image:url('assets/warm-welcome-reel.jpg')"></div>
+      <div class="slide" style="background-image:url('assets/not-alone-reel.jpg')"></div>
+      <div class="slide" style="background-image:url('https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=900')"></div>
+      <div class="slide" style="background-image:url('https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=900')"></div>
+      <div class="slide" style="background-image:url('https://images.pexels.com/photos/7579831/pexels-photo-7579831.jpeg?auto=compress&cs=tinysrgb&w=900')"></div>
+      <div class="rtint"></div>
+    </div>
+  </div>
   <div class="stats-band"><div class="wrap stats-in">
     <div class="stat"><span class="si">🩺</span><div><b>100%</b><em>Telehealth Services</em></div></div>
     <div class="stat"><span class="si">🤝</span><div><b>Personalized</b><em>1-on-1 Meetings</em></div></div>
@@ -624,6 +631,10 @@
     document.getElementById('specGrid').innerHTML=t+t; startSpecReel();
   }
   renderReel(null);
+  /* hero happy-faces reel: cross-fade */
+  (function(){var sl=document.querySelectorAll('#heroReel .slide');if(sl.length<2)return;
+    var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;if(reduce)return;
+    var i=0;setInterval(function(){sl[i].classList.remove('on');i=(i+1)%sl.length;sl[i].classList.add('on');},3800);})();
   /* apply admin-uploaded reel photos from Supabase (shared across devices) */
   if(window.ElelroiSync){ElelroiSync.getImages().then(function(im){if(im&&im.reel)renderReel(im.reel);});}
   function startSpecReel(){
