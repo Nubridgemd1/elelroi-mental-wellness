@@ -5,7 +5,10 @@
  * NOTE: this is a per-browser studio (the site is static / no backend), same as the rest of the admin.
  */
 (function () {
-  var PASS = 'elelroi2026';
+  // Passcode is the same one set in the Admin console (Settings → Change passcode).
+  // It is stored in this browser under 'elelroi_pass' and falls back to the default
+  // until the admin changes it, so editing and the console always share one passcode.
+  function PASS() { try { return localStorage.getItem('elelroi_pass') || 'elelroi2026'; } catch (e) { return 'elelroi2026'; } }
   var LS_TEXT = 'elelroi_text_ov', LS_FONT = 'elelroi_fonts';
   // Comprehensive set of editable text blocks on the public pages.
   var SEL = [
@@ -65,7 +68,7 @@
     bar.appendChild(fontPicker('Body', 'sans', FONTS));
     var spacer = document.createElement('span'); spacer.style.flex = '1'; bar.appendChild(spacer);
     var reset = btn('Reset all', 'transparent', '#fff', '1px solid rgba(255,255,255,.45)');
-    reset.onclick = function () { if (confirm('Reset all text and font changes on this browser?')) { localStorage.removeItem(LS_TEXT); localStorage.removeItem(LS_FONT); location.href = location.pathname + '?edit=' + PASS; } };
+    reset.onclick = function () { if (confirm('Reset all text and font changes on this browser?')) { localStorage.removeItem(LS_TEXT); localStorage.removeItem(LS_FONT); location.href = location.pathname + '?edit=' + PASS(); } };
     var done = btn('Done', '#f3c012', '#15304a', '0'); done.style.fontWeight = '700';
     done.onclick = function () { location.href = location.pathname; };
     bar.appendChild(reset); bar.appendChild(done);
@@ -85,7 +88,7 @@
   function init() {
     tag(); applyText(); applyFonts();
     var q = new URLSearchParams(location.search);
-    if (q.get('edit') === PASS) enterEdit();
+    if (q.get('edit') === PASS()) enterEdit();
   }
   if (document.readyState !== 'loading') init(); else document.addEventListener('DOMContentLoaded', init);
 })();

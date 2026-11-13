@@ -139,10 +139,10 @@
         <h2>&#10047; Edit the live site</h2>
         <div class="sub">Open the website in <b>edit mode</b> to change <b>any text</b> and the <b>fonts</b> right on the page: click any text to edit it, pick heading &amp; body fonts from the bar at the bottom, then press <b>Done</b>. Changes are saved in this browser.</div>
         <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-          <a class="btn gold sm" href="index.html?edit=elelroi2026" target="_blank" rel="noopener">&#10047; Edit Home page</a>
-          <a class="btn ghost sm" href="about.html?edit=elelroi2026" target="_blank" rel="noopener">Edit About</a>
-          <a class="btn ghost sm" href="psychiatric-evaluations.html?edit=elelroi2026" target="_blank" rel="noopener">Edit Evaluations</a>
-          <a class="btn ghost sm" href="journal.html?edit=elelroi2026" target="_blank" rel="noopener">Edit Journal</a>
+          <a class="btn gold sm editlink" data-page="index.html" href="index.html" target="_blank" rel="noopener">&#10047; Edit Home page</a>
+          <a class="btn ghost sm editlink" data-page="about.html" href="about.html" target="_blank" rel="noopener">Edit About</a>
+          <a class="btn ghost sm editlink" data-page="psychiatric-evaluations.html" href="psychiatric-evaluations.html" target="_blank" rel="noopener">Edit Evaluations</a>
+          <a class="btn ghost sm editlink" data-page="journal.html" href="journal.html" target="_blank" rel="noopener">Edit Journal</a>
         </div>
       </div>
       <div class="pcard">
@@ -229,10 +229,11 @@
     <div class="panel" id="p-settings">
       <div class="pcard">
         <h2>Change passcode</h2>
-        <div class="sub">Protects this admin console on this device.</div>
-        <div class="field"><label>Current passcode</label><input id="curPass" type="password"></div>
-        <div class="field"><label>New passcode</label><input id="newPass" type="password"></div>
+        <div class="sub">One passcode protects both this admin console <b>and</b> the live-site editor. Set a new one here &mdash; it is saved on this device and stays changed until you change it again.</div>
+        <div class="field"><label>Current passcode</label><input id="curPass" type="password" autocomplete="off"></div>
+        <div class="field"><label>New passcode (4+ characters)</label><input id="newPass" type="text" autocomplete="off" onkeydown="if(event.key==='Enter')changePass()"></div>
         <button class="btn gold" onclick="changePass()">Update passcode</button>
+        <div id="passOK" style="display:none;margin-top:14px;padding:12px 14px;border-radius:10px;background:#e9f7ec;border:1px solid #37a24b;color:#14532d;font-size:14px;line-height:1.5"></div>
       </div>
     </div>
 
@@ -249,9 +250,12 @@
     insurers:[]};
   function getCfg(){var c=Object.assign({},DEFAULTS);try{c=Object.assign(c,JSON.parse(localStorage.getItem('elelroi_cfg')||'{}'));}catch(e){}return c;}
   function passHash(){return localStorage.getItem('elelroi_pass')||'elelroi2026';}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  /* Point the "Edit the live site" buttons at the CURRENT passcode, so they keep working after a change. */
+  function wireEditLinks(){var p=encodeURIComponent(passHash());Array.prototype.forEach.call(document.querySelectorAll('.editlink'),function(a){a.setAttribute('href',a.getAttribute('data-page')+'?edit='+p);});}
 
   /* ---- login ---- */
-  function login(){var v=document.getElementById('pass').value;if(v===passHash()){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';loadAll();
+  function login(){var v=document.getElementById('pass').value;if(v===passHash()){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';wireEditLinks();loadAll();
     /* pull the live shared content so the admin shows what every visitor sees */
     if(window.ElelroiSync){
       ElelroiSync.getConfig().then(function(remote){if(remote&&typeof remote==='object'){var c=Object.assign(getCfg(),remote);try{localStorage.setItem('elelroi_cfg',JSON.stringify(c));}catch(e){}loadAll();}});
@@ -260,7 +264,17 @@
     }
   }else{toast('Incorrect passcode');}}
   function logout(){document.getElementById('app').style.display='none';document.getElementById('gate').style.display='flex';document.getElementById('pass').value='';}
-  function changePass(){if(document.getElementById('curPass').value!==passHash()){toast('Current passcode is wrong');return;}var n=document.getElementById('newPass').value.trim();if(n.length<4){toast('Use at least 4 characters');return;}localStorage.setItem('elelroi_pass',n);document.getElementById('curPass').value='';document.getElementById('newPass').value='';toast('Passcode updated');}
+  function changePass(){
+    if(document.getElementById('curPass').value!==passHash()){toast('Current passcode is wrong');return;}
+    var n=document.getElementById('newPass').value.trim();
+    if(n.length<4){toast('Use at least 4 characters');return;}
+    try{localStorage.setItem('elelroi_pass',n);}catch(e){toast('Could not save — storage blocked');return;}
+    document.getElementById('curPass').value='';document.getElementById('newPass').value='';
+    wireEditLinks();
+    var ok=document.getElementById('passOK');
+    if(ok){ok.style.display='block';ok.innerHTML='&#10003; <b>Passcode changed and saved.</b> Your new passcode <b>'+esc(n)+'</b> is now the one for both the admin login and the live-site editor on this device. It will stay this way until you change it again &mdash; no need to re-enter it next time.';}
+    toast('Passcode updated ✓');
+  }
 
   /* ---- tabs ---- */
   function tab(t){document.querySelectorAll('.tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.t===t);});document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('on',p.id==='p-'+t);});if(t==='bookings')renderBookings();if(t==='journal')renderPosts();if(t==='photos')renderPhotos();if(t==='card')renderCard();}
