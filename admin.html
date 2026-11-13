@@ -227,7 +227,7 @@
 <script src="assets/elelroi-sync.js"></script>
 <script>
   /* ---- config (shared with public site via Supabase + localStorage cache) ---- */
-  var DEFAULTS={providerName:'Fatima D Kukoyi, PMHNP-BC',shortName:'Fatima D Kukoyi, PMHNP-BC',phone:'(518) 328-2911',
+  var DEFAULTS={providerName:'Deborah Kukoyi, PMHNP-BC',shortName:'Deborah Kukoyi, PMHNP-BC',phone:'(518) 328-2911',
     email:'info@elelroimentalwellnesscenter.com',paymentLink:'',bookingEndpoint:'https://formsubmit.co/ajax/info@elelroimentalwellnesscenter.com',
     bio:'Evidence-based online psychiatry and medication management with a warm, nonjudgmental space for anxiety, depression, ADHD, trauma, and mood disorders. Serving clients across Texas.',
     insurers:[]};
@@ -341,12 +341,12 @@
     {bg:'linear-gradient(160deg,#2191cf,#13334a)',ic:'✨',script:'care in minutes',h:'Book in Just a Few Taps',p:'New-client appointments are quick and easy to schedule online.',cta:'Book Now'},
     {bg:'linear-gradient(160deg,#2191cf,#0f558c)',ic:'💛',script:'care for everyone',h:'Sliding Scale Available',p:'Private-pay options and HSA/FSA accepted. Care that fits your life.',cta:'Ask Us How'},
     {bg:'linear-gradient(160deg,#11486f,#0f558c)',ic:'🕊️',script:'mental health is health',h:'It’s Okay to Ask for Help',p:'Reaching out is strength. A warm, nonjudgmental space is waiting.',cta:'Start Today'},
-    {bg:'linear-gradient(160deg,#15659e,#0f558c)',ic:'👩🏽‍⚕️',script:'meet your provider',h:'Fatima D Kukoyi, PMHNP-BC',p:'Board-certified Psychiatric Mental Health Nurse Practitioner (APRN, PMHNP-BC).',cta:'View Profile'}
+    {bg:'linear-gradient(160deg,#15659e,#0f558c)',ic:'👩🏽‍⚕️',script:'meet your provider',h:'Deborah Kukoyi, PMHNP-BC',p:'Board-certified Psychiatric Mental Health Nurse Practitioner (APRN, PMHNP-BC).',cta:'View Profile'}
   ];
   function getFlyers(){var base=FLYERS.map(function(f){return Object.assign({},f);});try{var s=JSON.parse(localStorage.getItem('elelroi_flyers')||'null');if(s)s.forEach(function(o,i){if(o&&base[i])Object.assign(base[i],o);});}catch(e){}return base;}
   function renderFlyers(){var c=getCfg();var F=getFlyers();
     document.getElementById('flyerGrid').innerHTML=F.map(function(f,i){
-      var prov=(c.providerName||'Fatima D Kukoyi, PMHNP-BC');
+      var prov=(c.providerName||'Deborah Kukoyi, PMHNP-BC');
       return '<div class="flyer-wrap"><div class="flyer" id="fly'+i+'" style="background:'+f.bg+'"><div class="inner">'+
         '<div><div class="fscript" id="flys'+i+'">'+esc(f.script)+'</div><div class="fbrand">Elelroi Mental Wellness</div></div>'+
         '<div class="fmid"><div class="ficon">'+f.ic+'</div><h3 id="flyh'+i+'">'+esc(f.h)+'</h3><p id="flyp'+i+'">'+esc(f.p)+'</p><span class="fcta" id="flyc'+i+'">'+esc(f.cta)+'</span></div>'+
@@ -420,7 +420,7 @@
     });
   }
   /* ---- business card ---- */
-  function renderCard(){var c=getCfg();var prov=(c.providerName||'Fatima D Kukoyi, PMHNP-BC');var nm=prov.split(',')[0];var role=(prov.split(',').slice(1).join(',').trim()||'PMHNP-BC');
+  function renderCard(){var c=getCfg();var prov=(c.providerName||'Deborah Kukoyi, PMHNP-BC');var nm=prov.split(',')[0];var role=(prov.split(',').slice(1).join(',').trim()||'PMHNP-BC');
     document.getElementById('cardArea').innerHTML=
       '<div class="cardwrap">'+
       '<div><div class="fname" style="font-size:12px;color:var(--muted);margin-bottom:6px">FRONT</div>'+
