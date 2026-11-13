@@ -397,9 +397,6 @@
       <a href="#" class="btn gold" onclick="openBook();return false">Book an Appointment</a>
       <a href="#" class="btn ghost light" id="callBtn" onclick="callNow();return false">Call (281) 303-6029</a>
     </div>
-    <a class="pt-badge" id="ptBadge" href="https://www.psychologytoday.com/profile/1760882" target="_blank" rel="noopener">
-      ✦ Verified on <b>Psychology Today</b> — view full profile ↗
-    </a>
     </div>
     <div class="hero-reel" id="heroReel" aria-hidden="true">
       <div class="slide on" style="background-image:url('assets/warm-welcome-reel.jpg')"></div>
@@ -478,7 +475,6 @@
     <div class="fbrand">
       <img src="assets/elelroi-logo-nav.png" alt="Elelroi Mental Wellness" style="height:94px;width:auto;background:#fff;border-radius:12px;padding:8px;display:block">
       <p style="margin-top:10px;font-size:14px;color:#aec4d4;max-width:26em">Compassionate, evidence-based online psychiatry with Fatima D Kukoyi, PMHNP-BC. A calm place to heal — serving all of Texas.</p>
-      <a class="pt-badge" style="margin-top:18px" href="https://www.psychologytoday.com/profile/1760882" target="_blank" rel="noopener">✦ View our <b style="color:var(--gold)">Psychology Today</b> profile ↗</a>
     </div>
     <div>
       <h4>Contact</h4>
@@ -606,7 +602,6 @@
     var _f=document.getElementById('fName');if(_f)_f.textContent=CFG.providerName;
     var _c=document.getElementById('capName');if(_c)_c.textContent=CFG.shortName;
     var _a=document.getElementById('aboutBio');if(_a)_a.textContent=CFG.bio;
-    document.getElementById('ptBadge').href=CFG.ptLink;
     document.getElementById('footEmail').textContent='✉ '+CFG.email;
     document.getElementById('footEmail').href='mailto:'+CFG.email;
     document.getElementById('callBtn').textContent='Call '+CFG.phone;

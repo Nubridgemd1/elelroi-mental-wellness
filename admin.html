@@ -140,7 +140,6 @@
           <div class="field"><label>Phone</label><input id="f_phone"></div>
           <div class="field"><label>Contact email</label><input id="f_email"></div>
         </div>
-        <div class="field"><label>Psychology Today profile link</label><input id="f_ptLink"></div>
         <div class="field"><label>About / bio</label><textarea id="f_bio" rows="4"></textarea></div>
       </div>
       <div class="pcard">
@@ -252,11 +251,11 @@
 
   /* ---- update ---- */
   function loadAll(){var c=getCfg();
-    ['providerName','shortName','phone','email','ptLink','paymentLink','bookingEndpoint','bio'].forEach(function(k){var el=document.getElementById('f_'+k);if(el)el.value=c[k]||'';});
+    ['providerName','shortName','phone','email','paymentLink','bookingEndpoint','bio'].forEach(function(k){var el=document.getElementById('f_'+k);if(el)el.value=c[k]||'';});
     renderKit();renderFlyers();
   }
   function saveCfg(){var c=getCfg();
-    ['providerName','shortName','phone','email','ptLink','paymentLink','bookingEndpoint','bio'].forEach(function(k){c[k]=document.getElementById('f_'+k).value.trim();});
+    ['providerName','shortName','phone','email','paymentLink','bookingEndpoint','bio'].forEach(function(k){c[k]=document.getElementById('f_'+k).value.trim();});
     c.insurers=[];
     localStorage.setItem('elelroi_cfg',JSON.stringify(c));renderKit();renderFlyers();
     /* push to Supabase so the change is permanent and shows on every device */
