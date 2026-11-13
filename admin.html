@@ -228,7 +228,7 @@
 <script>
   /* ---- config (shared with public site via Supabase + localStorage cache) ---- */
   var DEFAULTS={providerName:'Fatima D Kukoyi, PMHNP-BC',shortName:'Fatima D Kukoyi, PMHNP-BC',phone:'(281) 303-6029',
-    email:'info@elelroimentalwellness.com',ptLink:'https://www.psychologytoday.com/profile/1760882',paymentLink:'',bookingEndpoint:'https://formsubmit.co/ajax/info@elelroimentalwellness.com',
+    email:'info@elelroimentalwellness.com',paymentLink:'',bookingEndpoint:'https://formsubmit.co/ajax/info@elelroimentalwellness.com',
     bio:'Evidence-based online psychiatry and medication management with a warm, nonjudgmental space for anxiety, depression, ADHD, trauma, and mood disorders. Serving clients across Texas.',
     insurers:[]};
   function getCfg(){var c=Object.assign({},DEFAULTS);try{c=Object.assign(c,JSON.parse(localStorage.getItem('elelroi_cfg')||'{}'));}catch(e){}return c;}
