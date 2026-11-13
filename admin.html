@@ -148,7 +148,7 @@
         <div class="field"><label>Card payment link (Stripe / Square)</label><input id="f_paymentLink" placeholder="https://buy.stripe.com/...  or  https://square.link/...">
           <div class="hint">When set, &ldquo;Book &amp; Pay&rdquo; sends clients straight to this secure checkout.</div></div>
         <div class="field"><label>Booking email delivery (optional)</label><input id="f_bookingEndpoint" placeholder="Paste your Web3Forms access key (recommended)">
-          <div class="hint"><b>Recommended:</b> get a free key at web3forms.com for info@elelroimentalwellness.com and paste it here — bookings then email you with no activation step. (You may also paste a full FormSubmit URL instead.) Leave blank to collect under the Bookings tab only.</div></div>
+          <div class="hint"><b>Recommended:</b> get a free key at web3forms.com for info@elelroimentalwellnesscenter.com and paste it here — bookings then email you with no activation step. (You may also paste a full FormSubmit URL instead.) Leave blank to collect under the Bookings tab only.</div></div>
       </div>
       <button class="btn gold" onclick="saveCfg()">Save changes</button>
       <button class="btn ghost" onclick="resetCfg()">Reset to defaults</button>
@@ -227,8 +227,8 @@
 <script src="assets/elelroi-sync.js"></script>
 <script>
   /* ---- config (shared with public site via Supabase + localStorage cache) ---- */
-  var DEFAULTS={providerName:'Fatima D Kukoyi, PMHNP-BC',shortName:'Fatima D Kukoyi, PMHNP-BC',phone:'(281) 303-6029',
-    email:'info@elelroimentalwellness.com',paymentLink:'',bookingEndpoint:'https://formsubmit.co/ajax/info@elelroimentalwellness.com',
+  var DEFAULTS={providerName:'Fatima D Kukoyi, PMHNP-BC',shortName:'Fatima D Kukoyi, PMHNP-BC',phone:'(518) 328-2911',
+    email:'info@elelroimentalwellnesscenter.com',paymentLink:'',bookingEndpoint:'https://formsubmit.co/ajax/info@elelroimentalwellnesscenter.com',
     bio:'Evidence-based online psychiatry and medication management with a warm, nonjudgmental space for anxiety, depression, ADHD, trauma, and mood disorders. Serving clients across Texas.',
     insurers:[]};
   function getCfg(){var c=Object.assign({},DEFAULTS);try{c=Object.assign(c,JSON.parse(localStorage.getItem('elelroi_cfg')||'{}'));}catch(e){}return c;}
@@ -356,7 +356,7 @@
         '<div class="flyer back" id="flyb'+i+'" style="background:linear-gradient(160deg,#2191cf,#0f558c)"><div class="inner">'+
         '<div><div class="fscript">scan · book · breathe</div><div class="fbrand">Elelroi Mental Wellness</div></div>'+
         '<div class="fmid"><img class="bqr" src="'+ELELROI_QR+'" alt="Scan to visit"><div class="bscan">Scan to book your appointment</div><div class="bname">'+esc(prov)+'</div></div>'+
-        '<div class="binfo">'+esc(c.phone)+'<br>info@elelroimentalwellness.com<br>elelroimentalwellness.com</div>'+
+        '<div class="binfo">'+esc(c.phone)+'<br>info@elelroimentalwellnesscenter.com<br>elelroimentalwellness.com</div>'+
         '</div></div>'+
         '<div class="flyer-actions"><button class="btn gold sm" onclick="dlFlyer('+i+',0)">⬇ Front</button>'+
         '<button class="btn gold sm" onclick="dlFlyer('+i+',1)">⬇ Back</button>'+
@@ -427,7 +427,7 @@
       '<div class="bizcard" id="card0" style="background:linear-gradient(145deg,#15659e,#2191cf 60%,#0f558c)"><div class="gbar"></div><div class="bc">'+
         '<div><div class="tag">calm · clarity · care</div></div>'+
         '<div><h4>'+esc(nm)+'</h4><div class="role">'+esc(role)+'</div><div class="ci" style="margin-top:8px">Elelroi Mental Wellness</div></div>'+
-        '<div class="ci">'+esc(c.phone)+' &nbsp;·&nbsp; info@elelroimentalwellness.com<br>elelroimentalwellness.com &nbsp;·&nbsp; Telehealth across Texas</div>'+
+        '<div class="ci">'+esc(c.phone)+' &nbsp;·&nbsp; info@elelroimentalwellnesscenter.com<br>elelroimentalwellness.com &nbsp;·&nbsp; Telehealth across Texas</div>'+
       '</div></div>'+
       '<div class="flyer-actions" style="margin-top:8px"><button class="btn gold sm" onclick="dlCard(0)">⬇ Front</button><button class="btn ghost sm" onclick="shareCard(0)">Share</button></div></div>'+
       '<div><div class="fname" style="font-size:12px;color:var(--muted);margin-bottom:6px">BACK</div>'+
