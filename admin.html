@@ -109,7 +109,7 @@
   <div class="card">
     <img src="assets/elelroi-logo-nav.png" alt="Elelroi Mental Wellness" style="height:108px;width:auto;margin:0 auto 8px;display:block">
     <div class="b2">Admin Console</div>
-    <input id="pass" type="password" placeholder="Passcode" onkeydown="if(event.key==='Enter')login()">
+    <div style="position:relative"><input id="pass" type="password" placeholder="Passcode" onkeydown="if(event.key==='Enter')login()" style="padding-right:44px"><button type="button" onclick="togglePw('pass',this)" aria-label="Show passcode" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:0;cursor:pointer;font-size:18px;opacity:.6;padding:4px">👁</button></div>
     <button id="enterBtn" class="btn gold" style="width:100%;justify-content:center" onclick="login()">Enter</button>
     <p class="hint" id="gateHint" style="margin-top:14px">Default passcode: <b>elelroi2026</b> — change it under Settings.</p>
     <p class="hint" id="forgotLink" style="margin-top:8px"><a href="#" onclick="startReset();return false" style="color:#2191cf;font-weight:700">Forgot passcode?</a></p>
@@ -118,9 +118,22 @@
     <div id="resetBox" hidden style="text-align:left">
       <hr style="border:0;border-top:1px solid #e4eef6;margin:12px 0">
       <div class="b2" style="font-size:16px;text-align:center">Reset passcode</div>
-      <div id="resetStage1">
-        <p class="hint" style="margin:10px 0">We'll email a one-time reset code to the practice inbox <b id="resetMail">—</b>. Open this page on the <b>same device/browser</b> to finish the reset.</p>
+
+      <!-- PRIMARY: recovery question — instant, no email -->
+      <div id="resetRecover" hidden>
+        <p class="hint" style="margin:10px 0">Answer your recovery question to set a new passcode <b>instantly</b>.</p>
+        <label id="recoverQ" style="display:block;font-size:13px;font-weight:700;color:#15304a"></label>
+        <input id="recoverAns" type="text" autocomplete="off" placeholder="Your answer" style="margin-top:6px">
+        <input id="recoverNew" type="text" autocomplete="off" placeholder="New passcode (4+ characters)" style="margin-top:8px" onkeydown="if(event.key==='Enter')doRecoveryReset()">
+        <button class="btn gold" style="width:100%;justify-content:center;margin-top:10px" onclick="doRecoveryReset()">Reset passcode</button>
+        <p class="hint" style="margin-top:8px"><a href="#" onclick="showEmailReset();return false" style="color:#2191cf;font-weight:600">Email me a code instead</a></p>
+      </div>
+
+      <!-- FALLBACK: email a one-time code -->
+      <div id="resetStage1" hidden>
+        <p class="hint" style="margin:10px 0">We'll email a one-time reset code to the practice inbox <b id="resetMail">—</b>. Finish on the <b>same device/browser</b>.</p>
         <button class="btn gold" style="width:100%;justify-content:center" onclick="sendReset(this)">Email me a reset code</button>
+        <p class="hint" id="noRecoverTip" style="margin-top:10px;display:none">Tip: set a <b>recovery question</b> under <b>Settings</b> — it's the fastest way to reset next time (no email needed).</p>
       </div>
       <div id="resetStage2" hidden>
         <p class="hint" style="margin:10px 0">Check <b id="resetMail2">the practice inbox</b> for a 6-digit code (also check spam). It expires in 30 minutes.</p>
@@ -250,10 +263,29 @@
       <div class="pcard">
         <h2>Change passcode</h2>
         <div class="sub">One passcode protects both this admin console <b>and</b> the live-site editor. Set a new one here &mdash; it is saved on this device and stays changed until you change it again.</div>
-        <div class="field"><label>Current passcode</label><input id="curPass" type="password" autocomplete="off"></div>
+        <div class="field"><label>Current passcode</label>
+          <div style="position:relative"><input id="curPass" type="password" autocomplete="off" style="padding-right:42px"><button type="button" onclick="togglePw('curPass',this)" aria-label="Show passcode" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;cursor:pointer;font-size:17px;opacity:.6;padding:4px">👁</button></div></div>
         <div class="field"><label>New passcode (4+ characters)</label><input id="newPass" type="text" autocomplete="off" onkeydown="if(event.key==='Enter')changePass()"></div>
         <button class="btn gold" onclick="changePass()">Update passcode</button>
         <div id="passOK" style="display:none;margin-top:14px;padding:12px 14px;border-radius:10px;background:#e9f7ec;border:1px solid #37a24b;color:#14532d;font-size:14px;line-height:1.5"></div>
+      </div>
+
+      <div class="pcard">
+        <h2>Recovery question <span style="font-size:12px;font-weight:500;color:#6b7b88">— for instant passcode reset (no email)</span></h2>
+        <div class="sub">Set a question only you can answer. If you ever forget the passcode, tap <b>Forgot passcode?</b> on the login screen, answer this, and set a new one — <b>instantly, with no email</b>.</div>
+        <div id="recStatus" class="sub" style="color:#14532d;font-weight:600;display:none"></div>
+        <div class="field"><label>Recovery question</label>
+          <select id="recQSel" onchange="document.getElementById('recQCustomWrap').style.display=this.value==='__custom'?'block':'none'">
+            <option value="What was the name of your first pet?">What was the name of your first pet?</option>
+            <option value="What city were you born in?">What city were you born in?</option>
+            <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+            <option value="What was the name of your first school?">What was the name of your first school?</option>
+            <option value="What is a word only you would know?">What is a word only you would know?</option>
+            <option value="__custom">Write my own question…</option>
+          </select></div>
+        <div class="field" id="recQCustomWrap" style="display:none"><label>Your question</label><input id="recQCustom" type="text" placeholder="Type your own recovery question"></div>
+        <div class="field"><label>Answer <span style="font-size:12px;color:#6b7b88">(not case-sensitive)</span></label><input id="recASet" type="text" autocomplete="off" placeholder="The answer you'll remember"></div>
+        <button class="btn gold" onclick="saveRecovery()">Save recovery question</button>
       </div>
     </div>
 
@@ -305,34 +337,70 @@
   function resetTarget(){var c=getCfg();return (c.email||'info@elelroimentalwellness.com');}
   function show(id,on){var el=document.getElementById(id);if(el){if(on)el.removeAttribute('hidden');else el.setAttribute('hidden','');}}
   function disp(id,v){var el=document.getElementById(id);if(el)el.style.display=v;}
+  /* recovery question — the easy, instant, no-email path */
+  var RECOVERY_KEY='elelroi_recovery';
+  function rnorm(s){return String(s==null?'':s).trim().toLowerCase().replace(/\s+/g,' ');}
+  function getRecovery(){try{var r=JSON.parse(localStorage.getItem(RECOVERY_KEY)||'null');return (r&&r.q&&r.h)?r:null;}catch(e){return null;}}
+  function setMaskEmails(){var m=maskEmail(resetTarget());var e1=document.getElementById('resetMail');if(e1)e1.textContent=m;var e2=document.getElementById('resetMail2');if(e2)e2.textContent=m;}
   function startReset(){['pass','enterBtn','gateHint','forgotLink'].forEach(function(id){disp(id,'none');});
-    show('resetBox',true);show('resetStage1',true);show('resetStage2',false);disp('resetOK','none');
-    var m=maskEmail(resetTarget());var e1=document.getElementById('resetMail');if(e1)e1.textContent=m;var e2=document.getElementById('resetMail2');if(e2)e2.textContent=m;}
+    show('resetBox',true);show('resetStage2',false);disp('resetOK','none');setMaskEmails();
+    var rec=getRecovery();
+    if(rec){show('resetRecover',true);show('resetStage1',false);var q=document.getElementById('recoverQ');if(q)q.textContent=rec.q;var a=document.getElementById('recoverAns');if(a){a.value='';a.focus();}var np=document.getElementById('recoverNew');if(np)np.value='';}
+    else{show('resetRecover',false);show('resetStage1',true);var tip=document.getElementById('noRecoverTip');if(tip)tip.style.display='block';}}
+  function showEmailReset(){show('resetRecover',false);show('resetStage2',false);show('resetStage1',true);setMaskEmails();var tip=document.getElementById('noRecoverTip');if(tip)tip.style.display='none';return false;}
+  function doRecoveryReset(){var rec=getRecovery();if(!rec){toast('No recovery question set — use the email option');return;}
+    var ans=rnorm(document.getElementById('recoverAns').value);var np=(document.getElementById('recoverNew').value||'').trim();
+    if(!ans){toast('Enter your recovery answer');return;}
+    if(rhash(ans)!==rec.h){toast('That answer doesn’t match');return;}
+    if(np.length<4){toast('New passcode needs at least 4 characters');return;}
+    try{localStorage.setItem('elelroi_pass',np);}catch(e){toast('Could not save — storage blocked');return;}
+    try{wireEditLinks();}catch(e){}
+    var ok=document.getElementById('resetOK');if(ok){ok.style.display='block';ok.innerHTML='&#10003; <b>Passcode reset.</b> Your new passcode <b>'+esc(np)+'</b> now works for the admin login and the live-site editor on this device. Signing you in…';}
+    show('resetRecover',false);
+    setTimeout(function(){var pi=document.getElementById('pass');if(pi)pi.value=np;cancelReset();login();},1400);}
   function cancelReset(){['pass','enterBtn','gateHint','forgotLink'].forEach(function(id){disp(id,'');});show('resetBox',false);
     try{var u=new URL(location.href);u.searchParams.delete('reset');history.replaceState({},'',u.pathname+u.hash);}catch(e){}}
+  /* show/hide any passcode field before submit */
+  function togglePw(id,btn){var el=document.getElementById(id);if(!el)return;var showing=el.type==='password';el.type=showing?'text':'password';if(btn){btn.textContent=showing?'🙈':'👁';btn.setAttribute('aria-label',showing?'Hide passcode':'Show passcode');}try{el.focus();}catch(e){}}
+  /* recovery-question setup (Settings) */
+  function saveRecovery(){var sel=document.getElementById('recQSel');var q=sel?sel.value:'';if(q==='__custom')q=(document.getElementById('recQCustom').value||'').trim();
+    var ans=rnorm(document.getElementById('recASet').value);
+    if(!q){toast('Choose or write a recovery question');return;}
+    if(ans.length<2){toast('Enter a recovery answer (2+ characters)');return;}
+    try{localStorage.setItem(RECOVERY_KEY,JSON.stringify({q:q,h:rhash(ans)}));}catch(e){toast('Could not save — storage blocked');return;}
+    document.getElementById('recASet').value='';renderRecoveryStatus();toast('Recovery question saved ✓');}
+  function renderRecoveryStatus(){var rec=getRecovery();var s=document.getElementById('recStatus');if(!s)return;
+    if(rec){s.style.display='block';s.innerHTML='&#10003; Recovery is ON — question: “'+esc(rec.q)+'”. Update it below anytime.';
+      var sel=document.getElementById('recQSel');if(sel){var found=false;Array.prototype.forEach.call(sel.options,function(o){if(o.value===rec.q)found=true;});
+        if(found){sel.value=rec.q;document.getElementById('recQCustomWrap').style.display='none';}
+        else{sel.value='__custom';document.getElementById('recQCustomWrap').style.display='block';var cq=document.getElementById('recQCustom');if(cq)cq.value=rec.q;}}}
+    else{s.style.display='none';}}
   function sendViaBooking(payload){var ep=(getCfg().bookingEndpoint||'').trim(),url,body;
     if(!ep)return Promise.reject(new Error('No email delivery is set up. Add a Web3Forms key or FormSubmit URL under Settings → Booking email delivery.'));
     if(/^https?:\/\//i.test(ep)){url=ep;body=payload;}else{url='https://api.web3forms.com/submit';body=Object.assign({access_key:ep},payload);}
-    return fetch(url,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(body)}).then(function(r){return r.json().catch(function(){return{};});});}
+    var ctrl=(typeof AbortController!=='undefined')?new AbortController():null;
+    var t=ctrl?setTimeout(function(){ctrl.abort();},15000):null;
+    return fetch(url,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(body),signal:ctrl?ctrl.signal:undefined})
+      .then(function(r){if(t)clearTimeout(t);return r.json().catch(function(){return{};});},function(e){if(t)clearTimeout(t);throw e;});}
   function sendReset(btn,resend){
     var code=String(Math.floor(100000+Math.random()*900000));
-    try{localStorage.setItem(RESET_KEY,JSON.stringify({h:rhash(code),exp:Date.now()+RESET_MINS*60000,tries:0}));}catch(e){toast('Could not start reset — storage blocked');return;}
+    try{localStorage.setItem(RESET_KEY,JSON.stringify({h:rhash(code),exp:Date.now()+RESET_MINS*60000,tries:0}));}catch(e){toast('Could not start reset — storage blocked');return false;}
     var link=location.origin+location.pathname+'?reset='+code;
     var to=resetTarget();
     var payload={subject:'Elelroi Admin — your passcode reset code',_subject:'Elelroi Admin — your passcode reset code',from_name:'Elelroi Admin',name:'Elelroi Admin',email:to,
       message:'You (or someone) requested a passcode reset for the Elelroi Mental Wellness admin console.\n\nYour one-time reset code is: '+code+'\n\nIt expires in '+RESET_MINS+' minutes. Enter it on the admin login screen (Forgot passcode?) in the SAME browser where you requested it, then choose a new passcode.\n\nReset link (same browser): '+link+'\n\nIf you did not request this, you can ignore this email — your passcode has not changed.',
       reset_code:code,reset_link:link};
+    // Show the code-entry step IMMEDIATELY — never wait on the email network to advance the UI.
+    show('resetStage1',false);show('resetStage2',true);
+    var c=document.getElementById('resetCode');if(c){c.value='';c.focus();}
+    toast(resend?'Sending a new code…':'Sending your code…');
     if(btn&&btn.tagName==='BUTTON'){btn.disabled=true;btn.textContent='Sending…';}
-    sendViaBooking(payload).then(function(res){
-      show('resetStage1',false);show('resetStage2',true);
-      var ok=(res&&(res.success===true||res.success==='true'))||false;
-      toast(ok?(resend?'New code sent':'Reset code sent'):'Code sent — check your inbox');
-      var c=document.getElementById('resetCode');if(c)c.focus();
-    }).catch(function(err){
-      // Still allow entry (email may have gone through); surface the setup hint.
-      show('resetStage1',false);show('resetStage2',true);
-      toast((err&&err.message)||'Could not send email — check Settings');
-    }).then(function(){if(btn&&btn.tagName==='BUTTON'){btn.disabled=false;btn.textContent='Email me a reset code';}});
+    var finished=false;
+    function finish(msg){if(finished)return;finished=true;toast(msg);if(btn&&btn.tagName==='BUTTON'){btn.disabled=false;btn.textContent=resend?'Resend code':'Email me a reset code';}}
+    // Fire-and-forget: resolve the UI after a short window regardless of the relay's latency.
+    var killer=setTimeout(function(){finish('Code sent — if it doesn’t arrive in a minute, tap Resend (also check spam)');},6000);
+    sendViaBooking(payload).then(function(res){clearTimeout(killer);var ok=(res&&(res.success===true||res.success==='true'))||false;finish(ok?(resend?'New code emailed ✓':'Code emailed ✓'):'Code sent — check inbox & spam');})
+      .catch(function(err){clearTimeout(killer);finish((err&&err.message)||'Could not email the code — check Settings → Booking email delivery');});
     return false;
   }
   function doReset(){
@@ -358,7 +426,7 @@
   /* ---- update ---- */
   function loadAll(){var c=getCfg();
     ['providerName','shortName','phone','email','paymentLink','bookingEndpoint','bio'].forEach(function(k){var el=document.getElementById('f_'+k);if(el)el.value=c[k]||'';});
-    renderKit();renderFlyers();
+    renderKit();renderFlyers();renderRecoveryStatus();
   }
   function saveCfg(){var c=getCfg();
     ['providerName','shortName','phone','email','paymentLink','bookingEndpoint','bio'].forEach(function(k){c[k]=document.getElementById('f_'+k).value.trim();});
@@ -611,7 +679,7 @@
   /* deep link: admin.html?reset=CODE opens the reset form with the code prefilled (same browser only) */
   (function(){try{var rc=new URLSearchParams(location.search).get('reset');if(!rc)return;startReset();
     var rec=null;try{rec=JSON.parse(localStorage.getItem(RESET_KEY)||'null');}catch(e){}
-    if(rec&&Date.now()<=rec.exp){show('resetStage1',false);show('resetStage2',true);var c=document.getElementById('resetCode');if(c)c.value=rc.replace(/\D/g,'').slice(0,6);var n=document.getElementById('resetNew');if(n)n.focus();}
+    if(rec&&Date.now()<=rec.exp){show('resetRecover',false);show('resetStage1',false);show('resetStage2',true);var c=document.getElementById('resetCode');if(c)c.value=rc.replace(/\D/g,'').slice(0,6);var n=document.getElementById('resetNew');if(n)n.focus();}
     else{toast('Open the reset link in the same browser where you requested the code, or tap “Email me a reset code”.');}
   }catch(e){}})();
 </script>
