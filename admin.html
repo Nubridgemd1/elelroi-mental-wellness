@@ -184,7 +184,7 @@
         <div class="field"><label>Card payment link (Stripe / Square)</label><input id="f_paymentLink" placeholder="https://buy.stripe.com/...  or  https://square.link/...">
           <div class="hint">When set, &ldquo;Book &amp; Pay&rdquo; sends clients straight to this secure checkout.</div></div>
         <div class="field"><label>Booking email delivery (optional)</label><input id="f_bookingEndpoint" placeholder="Paste your Web3Forms access key (recommended)">
-          <div class="hint"><b>Recommended:</b> get a free key at web3forms.com for info@elelroimentalwellnesscenter.com and paste it here — bookings then email you with no activation step. (You may also paste a full FormSubmit URL instead.) Leave blank to collect under the Bookings tab only.</div></div>
+          <div class="hint"><b>Recommended:</b> get a free key at web3forms.com for info@elelroimentalwellness.com and paste it here — bookings then email you with no activation step. (You may also paste a full FormSubmit URL instead.) Leave blank to collect under the Bookings tab only.</div></div>
       </div>
       <button class="btn gold" onclick="saveCfg()">Save changes</button>
       <button class="btn ghost" onclick="resetCfg()">Reset to defaults</button>
@@ -265,9 +265,11 @@
 <script>
   /* ---- config (shared with public site via Supabase + localStorage cache) ---- */
   var DEFAULTS={providerName:'Deborah Kukoyi, PMHNP-BC',shortName:'Deborah Kukoyi, PMHNP-BC',phone:'(518) 328-2911',
-    email:'info@elelroimentalwellnesscenter.com',paymentLink:'',bookingEndpoint:'https://formsubmit.co/ajax/info@elelroimentalwellnesscenter.com',
+    email:'info@elelroimentalwellness.com',paymentLink:'',bookingEndpoint:'https://formsubmit.co/ajax/info@elelroimentalwellness.com',
     bio:'Evidence-based online psychiatry and medication management with a warm, nonjudgmental space for anxiety, depression, ADHD, trauma, and mood disorders. Serving clients across Texas.',
     insurers:[]};
+  /* migrate any previously-saved config off the dead elelroimentalwellnesscenter.com email */
+  (function(){try{['elelroi_cfg','elelroi_config'].forEach(function(k){var v=localStorage.getItem(k);if(v&&v.indexOf('elelroimentalwellnesscenter.com')>=0){localStorage.setItem(k,v.replace(/elelroimentalwellnesscenter\.com/g,'elelroimentalwellness.com'));}});}catch(e){}})();
   function getCfg(){var c=Object.assign({},DEFAULTS);try{c=Object.assign(c,JSON.parse(localStorage.getItem('elelroi_cfg')||'{}'));}catch(e){}return c;}
   function passHash(){return localStorage.getItem('elelroi_pass')||'elelroi2026';}
   function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -300,7 +302,7 @@
   var RESET_KEY='elelroi_reset', RESET_MINS=30;
   function rhash(s){var h=5381;s=String(s);for(var i=0;i<s.length;i++){h=((h<<5)+h)+s.charCodeAt(i);h=h&0xffffffff;}return (h>>>0).toString(36);}
   function maskEmail(e){e=String(e||'');var a=e.split('@');if(a.length<2||!a[0])return e;var u=a[0];var head=u.slice(0,Math.min(2,u.length));return head+'•••@'+a[1];}
-  function resetTarget(){var c=getCfg();return (c.email||'info@elelroimentalwellnesscenter.com');}
+  function resetTarget(){var c=getCfg();return (c.email||'info@elelroimentalwellness.com');}
   function show(id,on){var el=document.getElementById(id);if(el){if(on)el.removeAttribute('hidden');else el.setAttribute('hidden','');}}
   function disp(id,v){var el=document.getElementById(id);if(el)el.style.display=v;}
   function startReset(){['pass','enterBtn','gateHint','forgotLink'].forEach(function(id){disp(id,'none');});
@@ -465,7 +467,7 @@
         '<div class="fhead"><b>El-<i>elroi</i></b> &middot; Mental Wellness</div>'+
         '<img class="bphoto" src="'+photo+'" alt="Deborah Kukoyi">'+
         '<div class="fmid"><img class="bqr" src="'+ELELROI_QR+'" alt="Scan to visit"><div class="bscan">Scan to book your appointment</div><div class="bname">'+esc(prov)+'</div></div>'+
-        '<div class="binfo">'+esc(c.phone)+'<br>info@elelroimentalwellnesscenter.com<br>elelroimentalwellness.com</div>'+
+        '<div class="binfo">'+esc(c.phone)+'<br>info@elelroimentalwellness.com<br>elelroimentalwellness.com</div>'+
         '</div></div>'+
         '<div class="flyer-actions"><button class="btn gold sm" onclick="dlFlyer('+i+',0)">⬇ Front</button>'+
         '<button class="btn gold sm" onclick="dlFlyer('+i+',1)">⬇ Back</button>'+
@@ -536,7 +538,7 @@
       '<div class="bizcard" id="card0" style="background:linear-gradient(145deg,#15659e,#2191cf 60%,#0f558c)"><div class="gbar"></div><div class="bc">'+
         '<div><div class="tag">calm · clarity · care</div></div>'+
         '<div><h4>'+esc(nm)+'</h4><div class="role">'+esc(role)+'</div><div class="ci" style="margin-top:8px">Elelroi Mental Wellness</div></div>'+
-        '<div class="ci">'+esc(c.phone)+' &nbsp;·&nbsp; info@elelroimentalwellnesscenter.com<br>elelroimentalwellness.com &nbsp;·&nbsp; Telehealth across Texas</div>'+
+        '<div class="ci">'+esc(c.phone)+' &nbsp;·&nbsp; info@elelroimentalwellness.com<br>elelroimentalwellness.com &nbsp;·&nbsp; Telehealth across Texas</div>'+
       '</div></div>'+
       '<div class="flyer-actions" style="margin-top:8px"><button class="btn gold sm" onclick="dlCard(0)">⬇ Front</button><button class="btn ghost sm" onclick="shareCard(0)">Share</button></div></div>'+
       '<div><div class="fname" style="font-size:12px;color:var(--muted);margin-bottom:6px">BACK</div>'+
