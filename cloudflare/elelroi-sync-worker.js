@@ -116,6 +116,11 @@ export default {
           const rs = await db.prepare('SELECT data,created_at FROM bookings ORDER BY id DESC').all();
           return json({ rows: (rs.results || []).map((r) => Object.assign(JSON.parse(r.data), { at: r.created_at })) });
         }
+        case '/bookings/clear': {
+          if (!(await passOk(db, body.pass))) return json({ error: 'unauthorized' }, 403);
+          await db.prepare('DELETE FROM bookings').run();
+          return json({ ok: true });
+        }
         default:
           return json({ error: 'not found', path }, 404);
       }

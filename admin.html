@@ -119,29 +119,21 @@
       <hr style="border:0;border-top:1px solid #e4eef6;margin:12px 0">
       <div class="b2" style="font-size:16px;text-align:center">Reset passcode</div>
 
-      <!-- PRIMARY: recovery question — instant, no email -->
+      <!-- recovery question — instant, cross-device, no email -->
       <div id="resetRecover" hidden>
-        <p class="hint" style="margin:10px 0">Answer your recovery question to set a new passcode <b>instantly</b>.</p>
+        <p class="hint" style="margin:10px 0">Answer your recovery question to set a new passcode <b>instantly, on every device</b>.</p>
         <label id="recoverQ" style="display:block;font-size:13px;font-weight:700;color:#15304a"></label>
         <input id="recoverAns" type="text" autocomplete="off" placeholder="Your answer" style="margin-top:6px">
         <input id="recoverNew" type="text" autocomplete="off" placeholder="New passcode (4+ characters)" style="margin-top:8px" onkeydown="if(event.key==='Enter')doRecoveryReset()">
         <button class="btn gold" style="width:100%;justify-content:center;margin-top:10px" onclick="doRecoveryReset()">Reset passcode</button>
-        <p class="hint" style="margin-top:8px"><a href="#" onclick="showEmailReset();return false" style="color:#2191cf;font-weight:600">Email me a code instead</a></p>
       </div>
 
-      <!-- FALLBACK: email a one-time code -->
-      <div id="resetStage1" hidden>
-        <p class="hint" style="margin:10px 0">We'll email a one-time reset code to the practice inbox <b id="resetMail">—</b>. Finish on the <b>same device/browser</b>.</p>
-        <button class="btn gold" style="width:100%;justify-content:center" onclick="sendReset(this)">Email me a reset code</button>
-        <p class="hint" id="noRecoverTip" style="margin-top:10px;display:none">Tip: set a <b>recovery question</b> under <b>Settings</b> — it's the fastest way to reset next time (no email needed).</p>
+      <!-- no recovery question set -->
+      <div id="resetNone" hidden>
+        <p class="hint" style="margin:10px 0">No <b>recovery question</b> is set on this account yet. Once you're logged in, set one under <b>Settings → Recovery question</b> — then you can reset your passcode here anytime, on any device.</p>
+        <p class="hint" style="margin:10px 0;color:#92400e">Locked out with no recovery question? Contact your site developer to reset it.</p>
       </div>
-      <div id="resetStage2" hidden>
-        <p class="hint" style="margin:10px 0">Check <b id="resetMail2">the practice inbox</b> for a 6-digit code (also check spam). It expires in 30 minutes.</p>
-        <input id="resetCode" inputmode="numeric" maxlength="6" placeholder="6-digit code" style="letter-spacing:5px;text-align:center;font-size:18px">
-        <input id="resetNew" type="text" placeholder="New passcode (4+ characters)" style="margin-top:8px">
-        <button class="btn gold" style="width:100%;justify-content:center;margin-top:10px" onclick="doReset()">Reset passcode</button>
-        <p class="hint" style="margin-top:8px"><a href="#" onclick="sendReset(this,true);return false" style="color:#2191cf;font-weight:600">Resend code</a></p>
-      </div>
+
       <div id="resetOK" style="display:none;margin-top:10px;padding:10px 12px;border-radius:9px;background:#e9f7ec;border:1px solid #37a24b;color:#14532d;font-size:13px;line-height:1.5"></div>
       <p class="hint" style="margin-top:10px;text-align:center"><a href="#" onclick="cancelReset();return false">&larr; Back to login</a></p>
     </div>
@@ -293,7 +285,7 @@
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="assets/elelroi-sync.js"></script>
+<script src="assets/elelroi-sync.js?v=2"></script>
 <script>
   /* ---- config (shared with public site via Supabase + localStorage cache) ---- */
   var DEFAULTS={providerName:'Deborah Kukoyi, PMHNP-BC',shortName:'Deborah Kukoyi, PMHNP-BC',phone:'(518) 328-2911',
@@ -309,116 +301,95 @@
   function wireEditLinks(){var p=encodeURIComponent(passHash());Array.prototype.forEach.call(document.querySelectorAll('.editlink'),function(a){a.setAttribute('href',a.getAttribute('data-page')+'?edit='+p);});}
 
   /* ---- login ---- */
-  function login(){var v=document.getElementById('pass').value;if(v===passHash()){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';wireEditLinks();loadAll();
-    /* pull the live shared content so the admin shows what every visitor sees */
+  function enterApp(v){try{if(window.ElelroiSync&&ElelroiSync.setPasscode)ElelroiSync.setPasscode(v);}catch(e){}
+    try{localStorage.setItem('elelroi_pass',v);}catch(e){}
+    document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';wireEditLinks();loadAll();
+    /* pull the live shared content so the admin shows what every visitor sees, on every device */
     if(window.ElelroiSync){
       ElelroiSync.getConfig().then(function(remote){if(remote&&typeof remote==='object'){var c=Object.assign(getCfg(),remote);try{localStorage.setItem('elelroi_cfg',JSON.stringify(c));}catch(e){}loadAll();}});
       ElelroiSync.get('posts').then(function(p){if(p&&p.length){try{localStorage.setItem('elelroi_posts',JSON.stringify(p));}catch(e){}renderPosts();}});
       ElelroiSync.get('flyers').then(function(f){if(f){try{localStorage.setItem('elelroi_flyers',JSON.stringify(f));}catch(e){}renderFlyers();}});
-    }
-  }else{toast('Incorrect passcode');}}
+    }}
+  function login(){var v=document.getElementById('pass').value;
+    if(window.ElelroiSync&&ElelroiSync.login){
+      var btn=document.getElementById('enterBtn');if(btn){btn.disabled=true;btn.textContent='Checking…';}
+      ElelroiSync.login(v).then(function(r){
+        if(btn){btn.disabled=false;btn.textContent='Enter';}
+        if(r&&r.ok){enterApp(v);} else {toast('Incorrect passcode');}
+      }).catch(function(){ /* Worker unreachable → offline fallback to last-known passcode on THIS device */
+        if(btn){btn.disabled=false;btn.textContent='Enter';}
+        if(v===passHash()){enterApp(v);} else {toast('Incorrect passcode (offline)');}
+      });
+    } else { if(v===passHash()){enterApp(v);} else {toast('Incorrect passcode');} }}
   function logout(){document.getElementById('app').style.display='none';document.getElementById('gate').style.display='flex';document.getElementById('pass').value='';}
   function changePass(){
-    if(document.getElementById('curPass').value!==passHash()){toast('Current passcode is wrong');return;}
+    var cur=document.getElementById('curPass').value;
     var n=document.getElementById('newPass').value.trim();
     if(n.length<4){toast('Use at least 4 characters');return;}
-    try{localStorage.setItem('elelroi_pass',n);}catch(e){toast('Could not save — storage blocked');return;}
-    document.getElementById('curPass').value='';document.getElementById('newPass').value='';
-    wireEditLinks();
-    var ok=document.getElementById('passOK');
-    if(ok){ok.style.display='block';ok.innerHTML='&#10003; <b>Passcode changed and saved.</b> Your new passcode <b>'+esc(n)+'</b> is now the one for both the admin login and the live-site editor on this device. It will stay this way until you change it again &mdash; no need to re-enter it next time.';}
-    toast('Passcode updated ✓');
+    var apply=function(scope){try{localStorage.setItem('elelroi_pass',n);}catch(e){}
+      try{if(window.ElelroiSync&&ElelroiSync.setPasscode)ElelroiSync.setPasscode(n);}catch(e){}
+      document.getElementById('curPass').value='';document.getElementById('newPass').value='';wireEditLinks();
+      var ok=document.getElementById('passOK');
+      if(ok){ok.style.display='block';ok.innerHTML='&#10003; <b>Passcode changed and saved.</b> Your new passcode <b>'+esc(n)+'</b> now works for the admin login and the live-site editor <b>on every device</b>'+(scope==='offline'?' (will sync when back online)':'')+'. It stays this way until you change it again.';}
+      toast('Passcode updated ✓');};
+    if(window.ElelroiSync&&ElelroiSync.changePass){
+      ElelroiSync.changePass(cur,n).then(function(r){
+        if(r&&r.ok){apply('online');}
+        else if(r&&r.error==='unauthorized'){toast('Current passcode is wrong');}
+        else{toast((r&&r.error)||'Could not update passcode');}
+      }).catch(function(){ if(cur!==passHash()){toast('Current passcode is wrong');return;} apply('offline'); });
+    } else { if(cur!==passHash()){toast('Current passcode is wrong');return;} apply('local'); }
   }
 
-  /* ---- forgot passcode: email a one-time code via the booking channel, reset in-browser ---- */
-  var RESET_KEY='elelroi_reset', RESET_MINS=30;
-  function rhash(s){var h=5381;s=String(s);for(var i=0;i<s.length;i++){h=((h<<5)+h)+s.charCodeAt(i);h=h&0xffffffff;}return (h>>>0).toString(36);}
-  function maskEmail(e){e=String(e||'');var a=e.split('@');if(a.length<2||!a[0])return e;var u=a[0];var head=u.slice(0,Math.min(2,u.length));return head+'•••@'+a[1];}
-  function resetTarget(){var c=getCfg();return (c.email||'info@elelroimentalwellness.com');}
+  /* ---- forgot passcode: recovery question, verified by the shared Worker (cross-device) ---- */
   function show(id,on){var el=document.getElementById(id);if(el){if(on)el.removeAttribute('hidden');else el.setAttribute('hidden','');}}
   function disp(id,v){var el=document.getElementById(id);if(el)el.style.display=v;}
-  /* recovery question — the easy, instant, no-email path */
+  /* recovery question — the easy, instant, cross-device path */
   var RECOVERY_KEY='elelroi_recovery';
   function rnorm(s){return String(s==null?'':s).trim().toLowerCase().replace(/\s+/g,' ');}
-  function getRecovery(){try{var r=JSON.parse(localStorage.getItem(RECOVERY_KEY)||'null');return (r&&r.q&&r.h)?r:null;}catch(e){return null;}}
-  function setMaskEmails(){var m=maskEmail(resetTarget());var e1=document.getElementById('resetMail');if(e1)e1.textContent=m;var e2=document.getElementById('resetMail2');if(e2)e2.textContent=m;}
+  function getRecovery(){try{var r=JSON.parse(localStorage.getItem(RECOVERY_KEY)||'null');return (r&&r.q)?r:null;}catch(e){return null;}}
   function startReset(){['pass','enterBtn','gateHint','forgotLink'].forEach(function(id){disp(id,'none');});
-    show('resetBox',true);show('resetStage2',false);disp('resetOK','none');setMaskEmails();
-    var rec=getRecovery();
-    if(rec){show('resetRecover',true);show('resetStage1',false);var q=document.getElementById('recoverQ');if(q)q.textContent=rec.q;var a=document.getElementById('recoverAns');if(a){a.value='';a.focus();}var np=document.getElementById('recoverNew');if(np)np.value='';}
-    else{show('resetRecover',false);show('resetStage1',true);var tip=document.getElementById('noRecoverTip');if(tip)tip.style.display='block';}}
-  function showEmailReset(){show('resetRecover',false);show('resetStage2',false);show('resetStage1',true);setMaskEmails();var tip=document.getElementById('noRecoverTip');if(tip)tip.style.display='none';return false;}
-  function doRecoveryReset(){var rec=getRecovery();if(!rec){toast('No recovery question set — use the email option');return;}
-    var ans=rnorm(document.getElementById('recoverAns').value);var np=(document.getElementById('recoverNew').value||'').trim();
-    if(!ans){toast('Enter your recovery answer');return;}
-    if(rhash(ans)!==rec.h){toast('That answer doesn’t match');return;}
+    show('resetBox',true);show('resetRecover',false);show('resetNone',false);disp('resetOK','none');
+    var useQ=function(q){
+      if(q){show('resetRecover',true);show('resetNone',false);var el=document.getElementById('recoverQ');if(el)el.textContent=q;var a=document.getElementById('recoverAns');if(a){a.value='';a.focus();}var np=document.getElementById('recoverNew');if(np)np.value='';}
+      else{show('resetRecover',false);show('resetNone',true);}};
+    if(window.ElelroiSync&&ElelroiSync.recoveryQuestion){ElelroiSync.recoveryQuestion().then(function(q){useQ(q||((getRecovery()||{}).q)||null);}).catch(function(){useQ((getRecovery()||{}).q);});}
+    else{useQ((getRecovery()||{}).q);}}
+  function doRecoveryReset(){
+    var ans=document.getElementById('recoverAns').value;var np=(document.getElementById('recoverNew').value||'').trim();
+    if(!ans.trim()){toast('Enter your recovery answer');return;}
     if(np.length<4){toast('New passcode needs at least 4 characters');return;}
-    try{localStorage.setItem('elelroi_pass',np);}catch(e){toast('Could not save — storage blocked');return;}
-    try{wireEditLinks();}catch(e){}
-    var ok=document.getElementById('resetOK');if(ok){ok.style.display='block';ok.innerHTML='&#10003; <b>Passcode reset.</b> Your new passcode <b>'+esc(np)+'</b> now works for the admin login and the live-site editor on this device. Signing you in…';}
-    show('resetRecover',false);
-    setTimeout(function(){var pi=document.getElementById('pass');if(pi)pi.value=np;cancelReset();login();},1400);}
+    if(!(window.ElelroiSync&&ElelroiSync.recoveryReset)){toast('Recovery needs an internet connection');return;}
+    ElelroiSync.recoveryReset(ans,np).then(function(r){
+      if(r&&r.ok){try{localStorage.setItem('elelroi_pass',np);}catch(e){}try{wireEditLinks();}catch(e){}
+        var ok=document.getElementById('resetOK');if(ok){ok.style.display='block';ok.innerHTML='&#10003; <b>Passcode reset.</b> Your new passcode <b>'+esc(np)+'</b> now works on <b>every device</b>. Signing you in…';}
+        show('resetRecover',false);
+        setTimeout(function(){var pi=document.getElementById('pass');if(pi)pi.value=np;cancelReset();enterApp(np);},1400);}
+      else{toast('That answer doesn’t match');}
+    }).catch(function(){toast('Can’t reach the server — check your connection and try again');});}
   function cancelReset(){['pass','enterBtn','gateHint','forgotLink'].forEach(function(id){disp(id,'');});show('resetBox',false);
     try{var u=new URL(location.href);u.searchParams.delete('reset');history.replaceState({},'',u.pathname+u.hash);}catch(e){}}
   /* show/hide any passcode field before submit */
   function togglePw(id,btn){var el=document.getElementById(id);if(!el)return;var showing=el.type==='password';el.type=showing?'text':'password';if(btn){btn.textContent=showing?'🙈':'👁';btn.setAttribute('aria-label',showing?'Hide passcode':'Show passcode');}try{el.focus();}catch(e){}}
   /* recovery-question setup (Settings) */
   function saveRecovery(){var sel=document.getElementById('recQSel');var q=sel?sel.value:'';if(q==='__custom')q=(document.getElementById('recQCustom').value||'').trim();
-    var ans=rnorm(document.getElementById('recASet').value);
+    var ans=document.getElementById('recASet').value;
     if(!q){toast('Choose or write a recovery question');return;}
-    if(ans.length<2){toast('Enter a recovery answer (2+ characters)');return;}
-    try{localStorage.setItem(RECOVERY_KEY,JSON.stringify({q:q,h:rhash(ans)}));}catch(e){toast('Could not save — storage blocked');return;}
-    document.getElementById('recASet').value='';renderRecoveryStatus();toast('Recovery question saved ✓');}
-  function renderRecoveryStatus(){var rec=getRecovery();var s=document.getElementById('recStatus');if(!s)return;
-    if(rec){s.style.display='block';s.innerHTML='&#10003; Recovery is ON — question: “'+esc(rec.q)+'”. Update it below anytime.';
-      var sel=document.getElementById('recQSel');if(sel){var found=false;Array.prototype.forEach.call(sel.options,function(o){if(o.value===rec.q)found=true;});
-        if(found){sel.value=rec.q;document.getElementById('recQCustomWrap').style.display='none';}
-        else{sel.value='__custom';document.getElementById('recQCustomWrap').style.display='block';var cq=document.getElementById('recQCustom');if(cq)cq.value=rec.q;}}}
-    else{s.style.display='none';}}
-  function sendViaBooking(payload){var ep=(getCfg().bookingEndpoint||'').trim(),url,body;
-    if(!ep)return Promise.reject(new Error('No email delivery is set up. Add a Web3Forms key or FormSubmit URL under Settings → Booking email delivery.'));
-    if(/^https?:\/\//i.test(ep)){url=ep;body=payload;}else{url='https://api.web3forms.com/submit';body=Object.assign({access_key:ep},payload);}
-    var ctrl=(typeof AbortController!=='undefined')?new AbortController():null;
-    var t=ctrl?setTimeout(function(){ctrl.abort();},15000):null;
-    return fetch(url,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(body),signal:ctrl?ctrl.signal:undefined})
-      .then(function(r){if(t)clearTimeout(t);return r.json().catch(function(){return{};});},function(e){if(t)clearTimeout(t);throw e;});}
-  function sendReset(btn,resend){
-    var code=String(Math.floor(100000+Math.random()*900000));
-    try{localStorage.setItem(RESET_KEY,JSON.stringify({h:rhash(code),exp:Date.now()+RESET_MINS*60000,tries:0}));}catch(e){toast('Could not start reset — storage blocked');return false;}
-    var link=location.origin+location.pathname+'?reset='+code;
-    var to=resetTarget();
-    var payload={subject:'Elelroi Admin — your passcode reset code',_subject:'Elelroi Admin — your passcode reset code',from_name:'Elelroi Admin',name:'Elelroi Admin',email:to,
-      message:'You (or someone) requested a passcode reset for the Elelroi Mental Wellness admin console.\n\nYour one-time reset code is: '+code+'\n\nIt expires in '+RESET_MINS+' minutes. Enter it on the admin login screen (Forgot passcode?) in the SAME browser where you requested it, then choose a new passcode.\n\nReset link (same browser): '+link+'\n\nIf you did not request this, you can ignore this email — your passcode has not changed.',
-      reset_code:code,reset_link:link};
-    // Show the code-entry step IMMEDIATELY — never wait on the email network to advance the UI.
-    show('resetStage1',false);show('resetStage2',true);
-    var c=document.getElementById('resetCode');if(c){c.value='';c.focus();}
-    toast(resend?'Sending a new code…':'Sending your code…');
-    if(btn&&btn.tagName==='BUTTON'){btn.disabled=true;btn.textContent='Sending…';}
-    var finished=false;
-    function finish(msg){if(finished)return;finished=true;toast(msg);if(btn&&btn.tagName==='BUTTON'){btn.disabled=false;btn.textContent=resend?'Resend code':'Email me a reset code';}}
-    // Fire-and-forget: resolve the UI after a short window regardless of the relay's latency.
-    var killer=setTimeout(function(){finish('Code sent — if it doesn’t arrive in a minute, tap Resend (also check spam)');},6000);
-    sendViaBooking(payload).then(function(res){clearTimeout(killer);var ok=(res&&(res.success===true||res.success==='true'))||false;finish(ok?(resend?'New code emailed ✓':'Code emailed ✓'):'Code sent — check inbox & spam');})
-      .catch(function(err){clearTimeout(killer);finish((err&&err.message)||'Could not email the code — check Settings → Booking email delivery');});
-    return false;
-  }
-  function doReset(){
-    var rec;try{rec=JSON.parse(localStorage.getItem(RESET_KEY)||'null');}catch(e){rec=null;}
-    if(!rec){toast('No active reset on this browser — tap “Email me a reset code” first');return;}
-    if(Date.now()>rec.exp){localStorage.removeItem(RESET_KEY);toast('That code expired — request a new one');return;}
-    if((rec.tries||0)>=5){localStorage.removeItem(RESET_KEY);toast('Too many attempts — request a new code');return;}
-    var code=(document.getElementById('resetCode').value||'').trim();
-    var np=(document.getElementById('resetNew').value||'').trim();
-    if(rhash(code)!==rec.h){rec.tries=(rec.tries||0)+1;try{localStorage.setItem(RESET_KEY,JSON.stringify(rec));}catch(e){}toast('Incorrect code ('+(5-rec.tries)+' left)');return;}
-    if(np.length<4){toast('New passcode needs at least 4 characters');return;}
-    try{localStorage.setItem('elelroi_pass',np);}catch(e){toast('Could not save — storage blocked');return;}
-    localStorage.removeItem(RESET_KEY);
-    try{wireEditLinks();}catch(e){}
-    var ok=document.getElementById('resetOK');if(ok){ok.style.display='block';ok.innerHTML='&#10003; <b>Passcode reset.</b> Your new passcode <b>'+esc(np)+'</b> now works for the admin login and the live-site editor on this device. Signing you in…';}
-    show('resetStage2',false);
-    setTimeout(function(){var pi=document.getElementById('pass');if(pi)pi.value=np;cancelReset();login();},1400);
-  }
+    if(rnorm(ans).length<2){toast('Enter a recovery answer (2+ characters)');return;}
+    if(!(window.ElelroiSync&&ElelroiSync.recoverySet)){toast('Recovery needs an internet connection');return;}
+    ElelroiSync.recoverySet(q,ans).then(function(r){
+      if(r&&r.ok){try{localStorage.setItem(RECOVERY_KEY,JSON.stringify({q:q}));}catch(e){}document.getElementById('recASet').value='';renderRecoveryStatus();toast('Recovery question saved ✓');}
+      else if(r&&r.error==='unauthorized'){toast('Re-enter your passcode first, then save');}
+      else{toast((r&&r.error)||'Could not save recovery question');}
+    }).catch(function(){toast('Can’t reach the server — try again');});}
+  function renderRecoveryStatus(){var s=document.getElementById('recStatus');if(!s)return;
+    var paint=function(q){if(q){s.style.display='block';s.innerHTML='&#10003; Recovery is ON — question: “'+esc(q)+'”. Update it below anytime.';
+        var sel=document.getElementById('recQSel');if(sel){var found=false;Array.prototype.forEach.call(sel.options,function(o){if(o.value===q)found=true;});
+          if(found){sel.value=q;document.getElementById('recQCustomWrap').style.display='none';}
+          else{sel.value='__custom';document.getElementById('recQCustomWrap').style.display='block';var cq=document.getElementById('recQCustom');if(cq)cq.value=q;}}}
+      else{s.style.display='none';}};
+    if(window.ElelroiSync&&ElelroiSync.recoveryQuestion){ElelroiSync.recoveryQuestion().then(function(q){paint(q||((getRecovery()||{}).q));}).catch(function(){paint((getRecovery()||{}).q);});}
+    else{paint((getRecovery()||{}).q);}}
 
   /* ---- tabs ---- */
   function tab(t){document.querySelectorAll('.tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.t===t);});document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('on',p.id==='p-'+t);});if(t==='bookings')renderBookings();if(t==='journal')renderPosts();if(t==='photos')renderPhotos();if(t==='card')renderCard();}
@@ -433,7 +404,7 @@
     c.insurers=[];
     localStorage.setItem('elelroi_cfg',JSON.stringify(c));renderKit();renderFlyers();
     /* push to Supabase so the change is permanent and shows on every device */
-    if(window.ElelroiSync){toast('Saving to your live site…');ElelroiSync.setConfig(c).then(function(ok){toast(ok?'Saved — live on every device':'Saved on this device (cloud sync failed — check Supabase)');});}
+    if(window.ElelroiSync){toast('Saving to your live site…');ElelroiSync.setConfig(c).then(function(ok){toast(ok?'Saved — live on every device':'Saved on this device (cloud sync failed — check connection)');});}
     else{toast('Saved — your website is updated');}
   }
   function resetCfg(){if(confirm('Reset all practice details to defaults?')){localStorage.removeItem('elelroi_cfg');loadAll();toast('Reset to defaults');}}
@@ -668,7 +639,8 @@
   }
   function clearBookings(){if(confirm('Clear all booking requests on every device? This cannot be undone.')){
     try{localStorage.removeItem('elelroi_bookings');}catch(e){}
-    if(window.ElelroiSync&&ElelroiSync.setBookings){ElelroiSync.setBookings([]).then(function(){renderBookings();});}else{renderBookings();}
+    if(window.ElelroiSync&&ElelroiSync.clearBookings){ElelroiSync.clearBookings().then(function(){if(ElelroiSync.setBookings)ElelroiSync.setBookings([]);renderBookings();});}
+    else if(window.ElelroiSync&&ElelroiSync.setBookings){ElelroiSync.setBookings([]).then(function(){renderBookings();});}else{renderBookings();}
   }}
 
   /* ---- util ---- */
@@ -676,12 +648,8 @@
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
   var tT;function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tT);tT=setTimeout(function(){t.classList.remove('show');},2400);}
 
-  /* deep link: admin.html?reset=CODE opens the reset form with the code prefilled (same browser only) */
-  (function(){try{var rc=new URLSearchParams(location.search).get('reset');if(!rc)return;startReset();
-    var rec=null;try{rec=JSON.parse(localStorage.getItem(RESET_KEY)||'null');}catch(e){}
-    if(rec&&Date.now()<=rec.exp){show('resetRecover',false);show('resetStage1',false);show('resetStage2',true);var c=document.getElementById('resetCode');if(c)c.value=rc.replace(/\D/g,'').slice(0,6);var n=document.getElementById('resetNew');if(n)n.focus();}
-    else{toast('Open the reset link in the same browser where you requested the code, or tap “Email me a reset code”.');}
-  }catch(e){}})();
+  /* legacy ?reset= links (old email flow) now just open the recovery form */
+  (function(){try{var u=new URL(location.href);if(u.searchParams.get('reset')){u.searchParams.delete('reset');history.replaceState({},'',u.pathname+u.hash);startReset();}}catch(e){}})();
 </script>
 </body>
 </html>
