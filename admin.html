@@ -110,8 +110,28 @@
     <img src="assets/elelroi-logo-nav.png" alt="Elelroi Mental Wellness" style="height:108px;width:auto;margin:0 auto 8px;display:block">
     <div class="b2">Admin Console</div>
     <input id="pass" type="password" placeholder="Passcode" onkeydown="if(event.key==='Enter')login()">
-    <button class="btn gold" style="width:100%;justify-content:center" onclick="login()">Enter</button>
-    <p class="hint" style="margin-top:14px">Default passcode: <b>elelroi2026</b> — change it under Settings.</p>
+    <button id="enterBtn" class="btn gold" style="width:100%;justify-content:center" onclick="login()">Enter</button>
+    <p class="hint" id="gateHint" style="margin-top:14px">Default passcode: <b>elelroi2026</b> — change it under Settings.</p>
+    <p class="hint" id="forgotLink" style="margin-top:8px"><a href="#" onclick="startReset();return false" style="color:#2191cf;font-weight:700">Forgot passcode?</a></p>
+
+    <!-- RESET PANEL -->
+    <div id="resetBox" hidden style="text-align:left">
+      <hr style="border:0;border-top:1px solid #e4eef6;margin:12px 0">
+      <div class="b2" style="font-size:16px;text-align:center">Reset passcode</div>
+      <div id="resetStage1">
+        <p class="hint" style="margin:10px 0">We'll email a one-time reset code to the practice inbox <b id="resetMail">—</b>. Open this page on the <b>same device/browser</b> to finish the reset.</p>
+        <button class="btn gold" style="width:100%;justify-content:center" onclick="sendReset(this)">Email me a reset code</button>
+      </div>
+      <div id="resetStage2" hidden>
+        <p class="hint" style="margin:10px 0">Check <b id="resetMail2">the practice inbox</b> for a 6-digit code (also check spam). It expires in 30 minutes.</p>
+        <input id="resetCode" inputmode="numeric" maxlength="6" placeholder="6-digit code" style="letter-spacing:5px;text-align:center;font-size:18px">
+        <input id="resetNew" type="text" placeholder="New passcode (4+ characters)" style="margin-top:8px">
+        <button class="btn gold" style="width:100%;justify-content:center;margin-top:10px" onclick="doReset()">Reset passcode</button>
+        <p class="hint" style="margin-top:8px"><a href="#" onclick="sendReset(this,true);return false" style="color:#2191cf;font-weight:600">Resend code</a></p>
+      </div>
+      <div id="resetOK" style="display:none;margin-top:10px;padding:10px 12px;border-radius:9px;background:#e9f7ec;border:1px solid #37a24b;color:#14532d;font-size:13px;line-height:1.5"></div>
+      <p class="hint" style="margin-top:10px;text-align:center"><a href="#" onclick="cancelReset();return false">&larr; Back to login</a></p>
+    </div>
   </div>
 </div>
 
@@ -274,6 +294,60 @@
     var ok=document.getElementById('passOK');
     if(ok){ok.style.display='block';ok.innerHTML='&#10003; <b>Passcode changed and saved.</b> Your new passcode <b>'+esc(n)+'</b> is now the one for both the admin login and the live-site editor on this device. It will stay this way until you change it again &mdash; no need to re-enter it next time.';}
     toast('Passcode updated ✓');
+  }
+
+  /* ---- forgot passcode: email a one-time code via the booking channel, reset in-browser ---- */
+  var RESET_KEY='elelroi_reset', RESET_MINS=30;
+  function rhash(s){var h=5381;s=String(s);for(var i=0;i<s.length;i++){h=((h<<5)+h)+s.charCodeAt(i);h=h&0xffffffff;}return (h>>>0).toString(36);}
+  function maskEmail(e){e=String(e||'');var a=e.split('@');if(a.length<2||!a[0])return e;var u=a[0];var head=u.slice(0,Math.min(2,u.length));return head+'•••@'+a[1];}
+  function resetTarget(){var c=getCfg();return (c.email||'info@elelroimentalwellnesscenter.com');}
+  function show(id,on){var el=document.getElementById(id);if(el){if(on)el.removeAttribute('hidden');else el.setAttribute('hidden','');}}
+  function disp(id,v){var el=document.getElementById(id);if(el)el.style.display=v;}
+  function startReset(){['pass','enterBtn','gateHint','forgotLink'].forEach(function(id){disp(id,'none');});
+    show('resetBox',true);show('resetStage1',true);show('resetStage2',false);disp('resetOK','none');
+    var m=maskEmail(resetTarget());var e1=document.getElementById('resetMail');if(e1)e1.textContent=m;var e2=document.getElementById('resetMail2');if(e2)e2.textContent=m;}
+  function cancelReset(){['pass','enterBtn','gateHint','forgotLink'].forEach(function(id){disp(id,'');});show('resetBox',false);
+    try{var u=new URL(location.href);u.searchParams.delete('reset');history.replaceState({},'',u.pathname+u.hash);}catch(e){}}
+  function sendViaBooking(payload){var ep=(getCfg().bookingEndpoint||'').trim(),url,body;
+    if(!ep)return Promise.reject(new Error('No email delivery is set up. Add a Web3Forms key or FormSubmit URL under Settings → Booking email delivery.'));
+    if(/^https?:\/\//i.test(ep)){url=ep;body=payload;}else{url='https://api.web3forms.com/submit';body=Object.assign({access_key:ep},payload);}
+    return fetch(url,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(body)}).then(function(r){return r.json().catch(function(){return{};});});}
+  function sendReset(btn,resend){
+    var code=String(Math.floor(100000+Math.random()*900000));
+    try{localStorage.setItem(RESET_KEY,JSON.stringify({h:rhash(code),exp:Date.now()+RESET_MINS*60000,tries:0}));}catch(e){toast('Could not start reset — storage blocked');return;}
+    var link=location.origin+location.pathname+'?reset='+code;
+    var to=resetTarget();
+    var payload={subject:'Elelroi Admin — your passcode reset code',_subject:'Elelroi Admin — your passcode reset code',from_name:'Elelroi Admin',name:'Elelroi Admin',email:to,
+      message:'You (or someone) requested a passcode reset for the Elelroi Mental Wellness admin console.\n\nYour one-time reset code is: '+code+'\n\nIt expires in '+RESET_MINS+' minutes. Enter it on the admin login screen (Forgot passcode?) in the SAME browser where you requested it, then choose a new passcode.\n\nReset link (same browser): '+link+'\n\nIf you did not request this, you can ignore this email — your passcode has not changed.',
+      reset_code:code,reset_link:link};
+    if(btn&&btn.tagName==='BUTTON'){btn.disabled=true;btn.textContent='Sending…';}
+    sendViaBooking(payload).then(function(res){
+      show('resetStage1',false);show('resetStage2',true);
+      var ok=(res&&(res.success===true||res.success==='true'))||false;
+      toast(ok?(resend?'New code sent':'Reset code sent'):'Code sent — check your inbox');
+      var c=document.getElementById('resetCode');if(c)c.focus();
+    }).catch(function(err){
+      // Still allow entry (email may have gone through); surface the setup hint.
+      show('resetStage1',false);show('resetStage2',true);
+      toast((err&&err.message)||'Could not send email — check Settings');
+    }).then(function(){if(btn&&btn.tagName==='BUTTON'){btn.disabled=false;btn.textContent='Email me a reset code';}});
+    return false;
+  }
+  function doReset(){
+    var rec;try{rec=JSON.parse(localStorage.getItem(RESET_KEY)||'null');}catch(e){rec=null;}
+    if(!rec){toast('No active reset on this browser — tap “Email me a reset code” first');return;}
+    if(Date.now()>rec.exp){localStorage.removeItem(RESET_KEY);toast('That code expired — request a new one');return;}
+    if((rec.tries||0)>=5){localStorage.removeItem(RESET_KEY);toast('Too many attempts — request a new code');return;}
+    var code=(document.getElementById('resetCode').value||'').trim();
+    var np=(document.getElementById('resetNew').value||'').trim();
+    if(rhash(code)!==rec.h){rec.tries=(rec.tries||0)+1;try{localStorage.setItem(RESET_KEY,JSON.stringify(rec));}catch(e){}toast('Incorrect code ('+(5-rec.tries)+' left)');return;}
+    if(np.length<4){toast('New passcode needs at least 4 characters');return;}
+    try{localStorage.setItem('elelroi_pass',np);}catch(e){toast('Could not save — storage blocked');return;}
+    localStorage.removeItem(RESET_KEY);
+    try{wireEditLinks();}catch(e){}
+    var ok=document.getElementById('resetOK');if(ok){ok.style.display='block';ok.innerHTML='&#10003; <b>Passcode reset.</b> Your new passcode <b>'+esc(np)+'</b> now works for the admin login and the live-site editor on this device. Signing you in…';}
+    show('resetStage2',false);
+    setTimeout(function(){var pi=document.getElementById('pass');if(pi)pi.value=np;cancelReset();login();},1400);
   }
 
   /* ---- tabs ---- */
@@ -531,6 +605,13 @@
   function siteUrl(){return 'https://elelroimentalwellness.com';}
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
   var tT;function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tT);tT=setTimeout(function(){t.classList.remove('show');},2400);}
+
+  /* deep link: admin.html?reset=CODE opens the reset form with the code prefilled (same browser only) */
+  (function(){try{var rc=new URLSearchParams(location.search).get('reset');if(!rc)return;startReset();
+    var rec=null;try{rec=JSON.parse(localStorage.getItem(RESET_KEY)||'null');}catch(e){}
+    if(rec&&Date.now()<=rec.exp){show('resetStage1',false);show('resetStage2',true);var c=document.getElementById('resetCode');if(c)c.value=rc.replace(/\D/g,'').slice(0,6);var n=document.getElementById('resetNew');if(n)n.focus();}
+    else{toast('Open the reset link in the same browser where you requested the code, or tap “Email me a reset code”.');}
+  }catch(e){}})();
 </script>
 </body>
 </html>
